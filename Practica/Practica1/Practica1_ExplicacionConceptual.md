@@ -83,4 +83,15 @@ Además se conoce información sobre las materias que se dictan en al facultad. 
 
 Además es necesario modelar a los empleados de la facultad. De los empleados se conoce DNI, nombre, apellido y legajo. De los empleados docentes además se conoce el título (puede no tener título o tener más de uno) y las materias que dicta. El docente puede rotar de materia, por lo que es necesario representar el historial de materias por el que pasó. Por otro lado, de los empleados no docentes es necesario representar CUIT y antiguedad.
 
+![ejercicioIntegrador_Conceptual](./drawios-png/ejercicioIntegrador_Conceptual.drawio.png)
 
+- Puede haber una entidad Persona que sea padre de las entidades Empleados y Alumnos con cobertura (T,E).
+
+- Como una materia se da una única vez en el año podemos crear el identificador externo que relacione el código de materia y el año de la cursada.
+	- La creación de un identificador externo, debe darse naturalmente (no forzada) con una entidad débil (1,1).
+	
+- No colocamos una relación entre alumno y materia porque perdemos la información de en que año cursó un alumno.
+	- Con Cursadas como entidad no perdemos esa información porque tenemos una cardinalidad de (1,1) por parte de Materias.
+	
+- Si coloco fechaDesde y fecha Hasta en Docente no puedo saber a que materia corresponde. Lo mismo ocurre con Materias, no puedo saber el docente que la dictó.
+	- fechaHasta siempre es opcional.

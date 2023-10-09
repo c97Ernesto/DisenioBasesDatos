@@ -1,5 +1,5 @@
 <div>
-<h2 align="center">Decisiones sobre el modelo Lógico</h2>
+<h2 align="center">Decisiones sobre el Modelo Lógico</h2>
 </div>
 
 ### Introducción
@@ -62,7 +62,9 @@ Además se conoce información sobre las materias que se dictan en al facultad. 
 
 Además es necesario modelar a los empleados de la facultad. De los empleados se conoce DNI, nombre, apellido y legajo. De los empleados docentes además se conoce el título (puede no tener título o tener más de uno) y las materias que dicta. El docente puede rotar de materia, por lo que es necesario representar el historial de materias por el que pasó. Por otro lado, de los empleados no docentes es necesario representar CUIT y antiguedad.
 
+#### Parte Conceptual:
 ![ejercicioIntegrador_Conceptual](./drawios-png/ejercicioIntegrador_Conceptual.drawio.png)
 
+#### Parte Lógica:
 ![ejercicioIntegrador_Logico](./drawios-png/ejercicioIntegrador_Logico.drawio.png)
 
