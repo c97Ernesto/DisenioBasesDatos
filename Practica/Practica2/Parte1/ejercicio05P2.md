@@ -6,10 +6,10 @@ sector; se debe poder determinar los sectores por los que pasó un empleado en o
 De los productos que se comercializan en las tiendas se debe registrar: tipo de producto, marca, modelo, talle, descripción, color, precio de venta y el stock del mismo en la tienda y un código único de producto. Por último, se deben registrar las ventas realizadas, indicando fecha, número de ticket fiscal, empleado que efectúa la venta, el/los productos involucrados y el total de la misma.
 
 ### Modelo ER Conceptual
-![ejercicio5_Conceptual](../Practica2/drawios-png/ejercicio05P2_Conceptual.drawio.png)
+![ejercicio5_Conceptual](../../Practica2/drawios-png/Parte1/ejercicio05P2_Conceptual.drawio.png)
 
 ### Modelo ER Lógico
-![ejercicio5_Lógico](../Practica2/drawios-png/ejercicio05P2_Logico.drawio.png)
+![ejercicio5_Lógico](../../Practica2/drawios-png/Parte1/ejercicio05P2_Logico.drawio.png)
 
 ### Modelo Físico Relacional
 

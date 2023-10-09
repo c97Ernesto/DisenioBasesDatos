@@ -6,10 +6,10 @@ Por último es necesario registrar los posibles incidentes ocurridos en la unida
 
 
 ### Modelo ER Conceptual
-![ejercicio3_Conceptual](../Practica2/drawios-png/ejercicio03P2_Conceptual.drawio.png)
+![ejercicio3_Conceptual](../../Practica2/drawios-png/Parte1/ejercicio03P2_Conceptual.drawio.png)
 
 ### Modelo ER Lógico
-![ejercicio3_Lógico](../Practica2/drawios-png/ejercicio03P2_Logico.drawio.png)
+![ejercicio3_Lógico](../../Practica2/drawios-png/Parte1/ejercicio03P2_Logico.drawio.png)
 
 ### Modelo Físico Relacional
 
