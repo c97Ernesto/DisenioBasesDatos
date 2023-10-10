@@ -23,9 +23,7 @@ Alumno = (<u>dni</u>, nombre, calle, nro, piso?, dpto?)
 
 - Todo depende de la **cardinalidad** de la relación
 
-**Cardinalidad muchos a muchos:**
-
-La solución propuesta es independiente de la cardinalidad mínima definida (obligatoria u opcional).
+**Cardinalidad muchos a muchos.** La solución propuesta es independiente de la cardinalidad mínima definida (obligatoria u opcional).
 
 - La relación N a N se convierte en tabla, conformada por los atributos que definen la CP de cada una de las entidades que relaciona.
 
@@ -34,9 +32,7 @@ La solución propuesta es independiente de la cardinalidad mínima definida (obl
 
 
 
-**Cardinalidad uno a muchos:**
-
-Hay dos alternativas posibles: puede ocurrir que la relación se transforme o no en una tabla. La decisión deberá ser tomada en función a la cardinalidad mínima definida y de las decisiones de diseño que tome el administrador de la BD.
+**Cardinalidad uno a muchos.** Hay dos alternativas posibles: puede ocurrir que la relación se transforme o no en una tabla. La decisión deberá ser tomada en función a la cardinalidad mínima definida y de las decisiones de diseño que tome el administrador de la BD.
 
 - No se convierte en tabla la relación: La entidad con (1,1) toma el identificador de la otra entidad como (fk).
 	- Uno a muchos con participación total ( (1,1) R (1,N) ).	
@@ -48,7 +44,7 @@ Hay dos alternativas posibles: puede ocurrir que la relación se transforme o no
 	- Uno a muchos con participación parcial del lado de uno ( (0,1) R (1,N) ).
 	- Uno a muchos con cobertura parcial de ambos lados ( (0,1) R (0,N) ).
 	
-**Cardinalidad uno a uno:**
+**Cardinalidad uno a uno.**
 
 - Uno a uno con participación total de ambos lados ( (1,1) R (1,1) )
 	- La relación no se convierte en tabla.

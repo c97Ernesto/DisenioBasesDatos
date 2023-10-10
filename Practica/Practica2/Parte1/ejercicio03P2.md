@@ -13,6 +13,21 @@ Por último es necesario registrar los posibles incidentes ocurridos en la unida
 
 ### Modelo Físico Relacional
 
-<u>x</u>
+- Empleado = (<u>DNI</u>, nombre, apellido, direccion)
+- Penitenciario = (<u>DNI</u>)
+- Administrativo = (<u>numMatricula</u>, DNI(fk) titulos)
+- Telefono = (<u>numTelefono</u>)
+- Pabellon = (<u>numUnico</u>, maxInternos, descripcion, ubicacion)
+- Administrativa = (<u>numUnico</u>, descripcion)
+- Interno = (<u>DNI</u>, nombre, apellido, apodo, numCausa)
+- Delito = (<u>delito</u>)
+- Incidente = (<u>DNI, fechaHora</u>, DNI(fk), numUnico(fk))
+- tiene = (<u>numTelefono, DNI</u>)
+- trabaja = (<u>DNI, numUnico, fechaDesde</u>, fechaHasta?)
+- trabaja1 = (<u>numMatricula, numUnico, fechaDesde</u>, fechaHasta?)
+- aloja = (<u>DNI, numUnico, fechaDesde</u>, fechaHasta?)
+- involucra = (<u>DNI, fechaHora, DNI</u>)
+- comete = (<u>delito, DNI</u>)
+
 
 
