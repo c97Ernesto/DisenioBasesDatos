@@ -17,28 +17,24 @@ Nota: tenga en cuenta que podría pedirse promedio de ventas de un semestre del 
 
 ### Modelo Físico Relacional
 
-PERSONA = (<u>DNI</u>, nombre, apellido, calle, numero, dpto?, piso?)
+- Persona = (<u>DNI</u>, nombre, apellido, calle, numero, dpto?, piso?)
 
-EMPLEADO = (<u>nroLegajo</u>, DNI(fk))
+- Empleado = (<u>nroLegajo</u>, DNI(fk))
 
-CLIENTE = (<u>DNI</u>, nacionalidad, sexo, numeroPasaporte?)
+- Cliente = (<u>DNI(fk)</u>, nacionalidad, sexo, numeroPasaporte?)
 
-AREA = (<u>codUnico</u>, descripcion, ubicacion)
+- Area = (<u>codUnico</u>, descripcion, ubicacion)
 
-TELEFONO (<u>numero</u>)
+- Telefono = (<u>numero</u>)
 
-VENTA = (<u>fechaVenta, codUnico</u>, numeroLegajo(fk), DNI(fk), comision, precio, hora)
+- Venta = (<u>fechaVenta, codUnico(fk)</u>, numeroLegajo(fk), DNI(fk), comision, precio, hora)
 
-ALQUILER = (<u>fechaInicio, codUnico</u>, numeroLegajo(fk), DNI(fk), fechaFin, precio)
+- Alquiler = (<u>fechaInicio, codUnico(fk)</u>, numeroLegajo(fk), DNI(fk), fechaFin, precio)
 
-TIPO = (<u>tipoInmueble</u>)
+- Tipo = (<u>tipoInmueble</u>)
 
-INMUEBLE = (<u>codUnico</u>, tipoInmueble(fk), cantAmbientes, lavadero, cantBanios, balcon, piso?, dpto?, numero, calle)
+- INMUEBLE = (<u>codUnico</u>, tipoInmueble(fk), cantAmbientes, lavadero, cantBanios, balcon, numero, calle, piso?, dpto?)
 
-TIENE2 = (<u>numero, codUnico</u>)
+- tiene2 = (<u>numero(fk), codUnico(fk)</u>)
 
-TRABAJA = (<u>nroLegajo, codUnico</u>, fechaInicio, fechaFin?)
-
-<u>x</u>
-
-
+- trabaja = (<u>nroLegajo(fk), codUnico(fk), fechaInicio</u>, fechaFin?)

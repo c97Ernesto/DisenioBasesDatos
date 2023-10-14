@@ -27,7 +27,3 @@ De los productos que se comercializan en las tiendas se debe registrar: tipo de 
 - Modelo = (<u>modelo</u>)
 - Marca = (<u>marca</u>)
 
-
-<u>x</u>
-
-
