@@ -6,22 +6,22 @@ sector; se debe poder determinar los sectores por los que pasó un empleado en o
 De los productos que se comercializan en las tiendas se debe registrar: tipo de producto, marca, modelo, talle, descripción, color, precio de venta y el stock del mismo en la tienda y un código único de producto. Por último, se deben registrar las ventas realizadas, indicando fecha, número de ticket fiscal, empleado que efectúa la venta, el/los productos involucrados y el total de la misma.
 
 ### Modelo ER Conceptual
-![ejercicio5_Conceptual](../../Practica2/drawios-png/Parte1/ejercicio05P2_Conceptual.drawio.png)
+![ejercicio5_Conceptual](../../Practica2/Parte1/drawios-png/ejercicio05P2_Conceptual.drawio.png)
 
 ### Modelo ER Lógico
-![ejercicio5_Lógico](../../Practica2/drawios-png/Parte1/ejercicio05P2_Logico.drawio.png)
+![ejercicio5_Lógico](../../Practica2/Parte1/drawios-png/ejercicio05P2_Logico.drawio.png)
 
 ### Modelo Físico Relacional
 
 - Empleado = (<u>DNI</u>, DNISupervisor(fk), razonSocial (fk), CUIL, nombre, apellido, cantHijos, direccion, esadoCivil, fechaNacimiento, fechaIngreso)
 - Supervisa = (<u>DNISupervisor</u>, DNI)
-- Sector = (<u>codRelativo, razonSocial</u>, nombre, descripcion)
-- asigna = (<u>DNI, codRelativo, razonSocial, fechaDesde</u>, fechaHasta?)
+- Sector = (<u>codRelativo, razonSocial(fk)</u>, nombre, descripcion)
+- asigna = (<u>DNI(fk), (codRelativo, razonSocial)(fk), fechaDesde</u>, fechaHasta?)
 - Tienda = (<u>razonSocial</u>, DNI(fk), numero(fk), instagram, facebook, calle, altura, dpto?, piso?)
-- trabaja = (<u>razonSocial, DNI</u>)
+- trabaja = (<u>razonSocial(fk), DNI(fk)</u>)
 - Telefono = (<u>numero</u>)
-- tiene1 = (<u>numero, DNI</u>)
-- Venta = (<u>DNI, nroTicket</u>, fecha, total)
+- tiene1 = (<u>numero(fk), DNI(fk)</u>)
+- Venta = (<u>DNI(fk), nroTicket</u>, fecha, total)
 - Producto = (<u>codProducto</u>, (DNI, nroTicket)(fk), marca(fk), modelo(fk), tipo(fk), razonSocial(fk))
 - Tipo = (<u>tipo</u>)
 - Modelo = (<u>modelo</u>)

@@ -13,10 +13,10 @@ Tenga en cuenta que un médico también puede contagiarse COVID-19 y su modelo d
 Nota: Podría pedirse médico que tiene máximo de atenciones por covid, médico que no atendió más de 10 pacientes, paciente con más contagios, entre otros.
 
 ### Modelo ER Conceptual
-![ejercicio7_Conceptual](../../Practica2/drawios-png/Parte1/ejercicio07P2_Conceptual.drawio.png)
+![ejercicio7_Conceptual](../../Practica2/Parte1/drawios-png/ejercicio07P2_Conceptual.drawio.png)
 
 ### Modelo ER Lógico
-![ejercicio7_Lógico](../../Practica2/drawios-png/Parte1/ejercicio07P2_Logico.drawio.png)
+![ejercicio7_Lógico](../../Practica2/Parte1/drawios-png/ejercicio07P2_Logico.drawio.png)
 
 ### Modelo Físico Relacional
 
