@@ -14,16 +14,27 @@ De los productos que se comercializan en las tiendas se debe registrar: tipo de 
 ### Modelo Físico Relacional
 
 - Empleado = (<u>DNI</u>, DNISupervisor(fk), razonSocial (fk), CUIL, nombre, apellido, cantHijos, direccion, esadoCivil, fechaNacimiento, fechaIngreso)
+
 - Supervisa = (<u>DNISupervisor</u>, DNI)
+
 - Sector = (<u>codRelativo, razonSocial(fk)</u>, nombre, descripcion)
-- asigna = (<u>DNI(fk), (codRelativo, razonSocial)(fk), fechaDesde</u>, fechaHasta?)
+
 - Tienda = (<u>razonSocial</u>, DNI(fk), numero(fk), instagram, facebook, calle, altura, dpto?, piso?)
-- trabaja = (<u>razonSocial(fk), DNI(fk)</u>)
+
 - Telefono = (<u>numero</u>)
-- tiene1 = (<u>numero(fk), DNI(fk)</u>)
+
 - Venta = (<u>DNI(fk), nroTicket</u>, fecha, total)
+
 - Producto = (<u>codProducto</u>, (DNI, nroTicket)(fk), marca(fk), modelo(fk), tipo(fk), razonSocial(fk))
+
 - Tipo = (<u>tipo</u>)
+
 - Modelo = (<u>modelo</u>)
+
 - Marca = (<u>marca</u>)
 
+- asigna = (<u>DNI(fk), (codRelativo, razonSocial)(fk), fechaDesde</u>, fechaHasta?)
+
+- trabaja = (<u>razonSocial(fk), DNI(fk)</u>)
+
+- tiene1 = (<u>numero(fk), DNI(fk)</u>)

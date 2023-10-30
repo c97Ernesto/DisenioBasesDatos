@@ -14,20 +14,31 @@ Por último es necesario registrar los posibles incidentes ocurridos en la unida
 ### Modelo Físico Relacional
 
 - Empleado = (<u>DNI</u>, legajo, nombre, apellido, direccion)
-- tiene = (<u>numTelefono(fk), DNI(fk)</u>)
+
 - Telefono = (<u>numTelefono</u>)
+
 - Penitenciario = (<u>DNI(fk)</u>)
+
 - Administrativo = (<u>numMatricula</u>, DNI(fk), cantTitulos)
-- trabaja = (<u>DNI(fk), numUnico, fechaDesde</u>, fechaHasta?)
+
 - Pabellon = (<u>numUnico</u>, maxInternos, descripcion, ubicacion)
-- trabaja1 = (<u>numMatricula, numUnico, fechaDesde</u>, fechaHasta?)
+
 - Administrativa = (<u>numUnico</u>, descripcion)
+
 - Interno = (<u>DNI</u>, nombre, apellido, apodo, numCausa)
-- aloja = (<u>DNI(fk), numUnico(fk), fechaDesde</u>, fechaHasta?)
-- comete = (<u>delito(fk), DNI(fk)</u>)
+
 - Delito = (<u>delito</u>)
+
 - Incidente = (<u>DNI(fk), fechaHora</u>, numUnico(fk))
+
 - involucra = (<u>DNI(fk), (fechaHora, DNI)(fk)</u>)
 
+- tiene = (<u>numTelefono(fk), DNI(fk)</u>)
 
+- trabaja = (<u>DNI(fk), numUnico, fechaDesde</u>, fechaHasta?)
 
+- trabaja1 = (<u>numMatricula, numUnico, fechaDesde</u>, fechaHasta?)
+
+- aloja = (<u>DNI(fk), numUnico(fk), fechaDesde</u>, fechaHasta?)
+
+- comete = (<u>delito(fk), DNI(fk)</u>)
