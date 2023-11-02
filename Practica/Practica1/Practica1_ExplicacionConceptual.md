@@ -46,11 +46,9 @@ Representan agregaciones entre dos (binaria) o más entidades. Describen las dep
 ### Jerarquía de Generalización:
 Permiten extraer propiedades comunes de varias entidades o relaciones, y generar con ellas una super-entidad que las aglutine. Así las características compartidas son expresadas una única vez en el modelo, y los rasgos específicos de cada entidad quedan definidos en su sub-entidad.
 
-- **Relaciones de jerarquía total**. Todos los registros (instancia individual) del supertipo (entidad principal) están especializados de alguna manera en uno de los subtipo (subentidad).
-	- La suma de los elementos de los hijos dan la totalidad de los elementos del padre.
-	- En el dominio no habría instancia de la clase padre que no sea una una de sus hijas.
+- **Relaciones de jerarquía total**. Una cobertura es total cuando cada elemento del padre está contenido en alguno de los hijos.
 	
-- **Relaciones de jerarquía parcial**. No todos los registros del supertipo entán obligados a estar relacionados con un subtipo. Podría llegar a quedar un registro fuera de la jerarquía si no estuviese clasificado en alguno de los subtipos.
+- **Relaciones de jerarquía parcial**. Pueden existir elementos del padre que no se instancien sobre los hijos.
 	- La suma de los elementos de los hijos pueden no dar la totalidad de los elementos del padre.
 	- Puede haber una instancia de la clase padre que no esté relacionada con sus hijas.
 	
