@@ -1,5 +1,4 @@
-**7.** 
-Se desea modelar la información necesaria para el tratamiento de pacientes con COVID-19. 
+#### 7. Se desea modelar la información necesaria para el tratamiento de pacientes con COVID-19. 
 
 Es necesario representar tanto a los pacientes que han contraído el virus como a los médicos que atienden los casos. Tanto para los médicos como para los pacientes es necesario almacenar: D.N.I, número de pasaporte (si poseen), dirección detallada, nombre,
 apellido y fecha de nacimiento. 

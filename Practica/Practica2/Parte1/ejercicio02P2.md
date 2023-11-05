@@ -1,4 +1,6 @@
-**2.** Se desea modelar la información necesaria para una red social. La red social permite a los usuarios compartir imágenes de diferentes temáticas y realizar comentarios sobre las mismas. De los usuarios se registran: nombre y apellido, usuario en la red social (que es único), clave de acceso, cuentas de correo electrónico, dirección detallada y un teléfono de contacto.
+#### 2. Se desea modelar la información necesaria para una red social. 
+
+La red social permite a los usuarios compartir imágenes de diferentes temáticas y realizar comentarios sobre las mismas. De los usuarios se registran: nombre y apellido, usuario en la red social (que es único), clave de acceso, cuentas de correo electrónico, dirección detallada y un teléfono de contacto.
 
 En la red social, los usuarios pueden subir imágenes, o bien comentar, descargar o compartir una publicación (imagen) de otros usuarios vinculados.
 

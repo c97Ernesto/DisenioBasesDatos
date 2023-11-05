@@ -1,4 +1,4 @@
-**1.** Se debe modelar la información necesaria para una Inmobiliaria de la ciudad de La Plata. 
+#### 1. Se debe modelar la información necesaria para una Inmobiliaria de la ciudad de La Plata. 
 
 Es necesario modelar la información de clientes y empleados de la inmobiliaria. De ambos se conoce D.N.I, nombre, apellido y dirección detallada. Además de los empleados se conoce el número de legajo, el cual no se repite entre diferentes empleados y el área donde trabaja cada uno. Los empleados pueden ir rotando de área a lo largo del tiempo y es necesario modelar por las distintas áreas que pasó un empleado. De las áreas se conoce código único de área, descripción, teléfonos y ubicación. De cada cliente, además, se debe almacenar sexo, nacionalidad, número de pasaporte (si tuviera) y los inmuebles de los que es dueño. Un cliente no puede trabajar en la inmobiliaria.
 
