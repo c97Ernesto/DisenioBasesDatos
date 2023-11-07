@@ -17,3 +17,25 @@ Por otro lado, debemos modelar la reposición de materia prima con la que se ela
 
 ### Modelo Físico Relacional
 
+- Persona = (<u>DNI</u>, nombre, apellido)
+
+- Cliente = (<u>CUIL</u>, direccion, mail, DNI(fk))
+
+- Provedor = (<u>razonSocial</u>, DNI(fk))
+
+- Telefono = (<u>numTel</u>)
+
+- Pedido = (<u>CUIL(fk), fechaHoraPedido</u>, precioTotal, codZona(fk))
+
+- Zona = (<u>codZona</u>, costoEnvio)
+
+- Plato = (<u>codPlato</u>, precioPlatoActual, descripcion)
+
+- Producto = (<u>codPlato(fk), codigo</u>, stock, descripcion, precioProducto, cantMinima, (razonSocial, fechaHoraCompra)(fk))
+
+- Compra = (<u>razonSocial(fk), fechaHoraCompra</u>, )
+
+- formado = (<u>(CUIL, fechaHoraPedido)(fk), codPlato(fk)</u>, precioPlato)
+
+- tiene_tel = (<u>CUIL(fk), numTel(fk)</u>)
+

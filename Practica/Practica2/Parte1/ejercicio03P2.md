@@ -19,28 +19,28 @@ Por último es necesario registrar los posibles incidentes ocurridos en la unida
 
 - Telefono = (<u>numTelefono</u>)
 
-- Penitenciario = (<u>DNI(fk)</u>)
+- Penitenciario = (<u>DNI</u>)
 
 - Administrativo = (<u>numMatricula</u>, DNI(fk), cantTitulos)
 
-- Pabellon = (<u>numUnico</u>, maxInternos, descripcion, ubicacion)
+- Pabellon = (<u>numPabellon</u>, maxInternos, descripcion, ubicacion)
 
-- Administrativa = (<u>numUnico</u>, descripcion)
+- Administrativa = (<u>numAdministrativa</u>, descripcion)
 
 - Interno = (<u>DNI</u>, nombre, apellido, apodo, numCausa)
 
 - Delito = (<u>delito</u>)
 
-- Incidente = (<u>DNI(fk), fechaHora</u>, numUnico(fk))
+- Incidente = (<u>DNI(fk), fechaHora</u>, numPabellon(fk))
 
 - involucra = (<u>DNI(fk), (fechaHora, DNI)(fk)</u>)
 
-- tiene = (<u>numTelefono(fk), DNI(fk)</u>)
+- tiene_tel = (<u>numTelefono(fk), DNI(fk)</u>)
 
-- trabaja = (<u>DNI(fk), numUnico, fechaDesde</u>, fechaHasta?)
+- trabaja_pabellon = (<u>DNI(fk), numPabellon(fk), fechaDesde</u>, fechaHasta?)
 
-- trabaja1 = (<u>numMatricula, numUnico, fechaDesde</u>, fechaHasta?)
+- trabaja_adminitrativo = (<u>numMatricula(fk), numAdministrativa(fk), fechaDesde</u>, fechaHasta?)
 
-- aloja = (<u>DNI(fk), numUnico(fk), fechaDesde</u>, fechaHasta?)
+- aloja = (<u>DNI(fk), numPabellon(fk), fechaDesde</u>, fechaHasta?)
 
 - comete = (<u>delito(fk), DNI(fk)</u>)

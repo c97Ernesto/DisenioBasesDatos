@@ -21,7 +21,7 @@ Nota: tenga en cuenta que podría pedirse promedio de ventas de un semestre del 
 
 - Empleado = (<u>nroLegajo</u>, DNI(fk))
 
-- Cliente = (<u>DNI(fk)</u>, nacionalidad, sexo, numeroPasaporte?)
+- Cliente = (<u>DNI</u>, nacionalidad, sexo, numeroPasaporte?)
 
 - Area = (<u>codUnico</u>, descripcion, ubicacion)
 
@@ -33,7 +33,7 @@ Nota: tenga en cuenta que podría pedirse promedio de ventas de un semestre del 
 
 - Tipo = (<u>tipoInmueble</u>)
 
-- INMUEBLE = (<u>codUnico</u>, tipoInmueble(fk), cantAmbientes, lavadero, cantBanios, balcon, numero, calle, piso?, dpto?)
+- Inmueble = (<u>codUnico</u>, tipoInmueble(fk), cantAmbientes, lavadero, cantBanios, balcon, numero, calle, piso?, dpto?)
 
 - tiene2 = (<u>numero(fk), codUnico(fk)</u>)
 
