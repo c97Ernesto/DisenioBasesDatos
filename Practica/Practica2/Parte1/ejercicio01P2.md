@@ -9,13 +9,13 @@ De las ventas se registran fecha y hora de venta, cliente, empleado que vendió 
 
 Nota: tenga en cuenta que podría pedirse promedio de ventas de un semestre del año, vendedor más exitoso del año, tipo de inmueble más alquilado o más vendido entre otros.
 
-### Modelo ER Conceptual
+### Modelo ER Conceptual.
 ![ejercicio1_Conceptual](../../Practica2/Parte1/drawios-png/ejercicio01P2_Conceptual.drawio.png)
 
-### Modelo ER Lógico
+### Modelo ER Lógico.
 ![ejercicio1_Lógico](../../Practica2/Parte1/drawios-png/ejercicio01P2_Logico.drawio.png)
 
-### Modelo Físico Relacional
+### Modelo Físico Relacional.
 
 - Persona = (<u>DNI</u>, nombre, apellido, calle, numero, dpto?, piso?)
 

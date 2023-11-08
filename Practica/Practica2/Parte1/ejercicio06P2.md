@@ -18,3 +18,36 @@ El cliente puede abonar las compras en efectivo, con débito o crédito. Si abon
 
 ### Modelo Físico Relacional
 
+- Persona = (<u>DNI</u>, CUIT, nombre, apellido, direccion)
+
+- Telefono = (<u>telefono</u>)
+
+- Email = (<u>email</u>)
+
+- Cliente = (<u>codCliente</u>, DNI(fk))
+
+- Empleado = (<u>codEmpleado</u>, DNI(fk), fechaIngreso, fechaNacimiento, cantHijos)
+
+- Venta = (<u>numTicket</u>, fechaHoraVenta, codCliente(fk), codEmpleado(fk))
+
+- Articulo = (<u>codArticulo</u>, tamanio, stock, nombre, descripcion, precio)
+
+- tiene_tel  = (<u>DNI(fk), telefono</u>)
+
+- tiene_email = (<u>DNI(fk)</u>, email)
+
+- tiene = (<u>numTicket(fk), codArticulo(fk)</u>, precioVenta, cantVendido)
+
+- Efectivo = (<u>numTicket(fk), constancia</u>)
+
+- Tarjeta = (<u>nombreEntidad(fk), numTarjeta</u>)
+
+- Debito = (<u>nombreEntidad, numTarjeta</u>)
+
+- Credito = (<u>nombreEntidad, numTarjeta</u>, cuotas)
+
+- Entidad = (<u>nombreEntidad</u>, descripcion)
+
+- Banco = (<u>nombreBanco</u>, descripcion)
+
+- pago_tarjeta = (<u>numTicket(fk)</u>, (numTarjeta, nombreEntidad)(fk))

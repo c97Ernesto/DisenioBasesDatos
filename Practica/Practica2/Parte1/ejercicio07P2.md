@@ -19,6 +19,26 @@ Nota: Podría pedirse médico que tiene máximo de atenciones por covid, médico
 
 ### Modelo Físico Relacional
 
-<u>x</u>
+- Persona = (<u>DNI</u>, nombre, apellido, fechaNacimientom, direccion, numPasaporte?)
+
+- Medico = (<u>codMatricula</u>, DNI(fk))
+
+- Paciente = (<u>DNI</u>, cantDosis, descripcion)
+
+- Especialidad = (<u>nombreEspecialidad</u>)
+
+- Sala = (<u>numSala</u>, capacidad, piso)
+
+- Episodio = (<u>DNI(fk), numEpisodio</u>, fechaDeteccion)
+
+- Sintoma = (<u>codSintoma</u>, capacidad, piso)
+
+- tiene = (<u>codMatricula(fk), nombreEspecialidad(fk)</u>, nota)
+
+- atiende_sala = (<u>codMatricula(fk), numSala(fk)</u>)
+
+- atiende_episodio = (<u>codMatricula(fk), (DNI, numEpisodio)(fk)</u>)
+
+- contiene = (<u>codSintoma(fk), (DNI, numEpisodio)(fk)</u>)
 
 

@@ -19,6 +19,30 @@ Nota: tenga en cuenta que la tarjeta se puede usar en N pagos y en diferente can
 
 ### Modelo Físico Relacional
 
-<u>x</u>
+- Persona = (<u>dni</u>, nombre, apellido, calle, altura, piso?, dpto?)
+
+- Componente = (<u>codComponente</u>, nombre, marca)
+
+- Peluquero = (<u>dni</u>, telefono)
+
+- Cliente = (<u>dni</u>, fechaNacimiento)
+
+- Telefono = (<u>numeroTelefono</u>)
+
+- tiene_tel = (<u>dni(fk), numeroTelefono(fk)</u>)
+
+- Efectivo = (<u>dni(fk), constancia</u>)
+
+- Tarjeta = (<u>numero</u>, codSguridad, banco, entidad)
+
+- Debito = (<u>numero</u>)
+
+- Credito = (<u>numero</u>, cuotas)
+
+- Tratamiento = (<u>(fechaAtencion, dni)(fk), nomTratamiento</u>, descripcion, duracion, precio)
+
+- Atencion = (<u>dni(fk), fechaAtencion</u>, precioAtencion, dniPiculero(fk))
+
+- tiene (<u>codComponente(fk), nomTratamiento(fk), cantidad</u>)
 
 
