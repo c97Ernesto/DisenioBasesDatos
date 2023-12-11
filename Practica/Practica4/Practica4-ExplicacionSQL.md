@@ -195,7 +195,7 @@ Son funciones que operan sobre un conjunto de tuplas de entrada y producen un ú
 - SUM: retorna como resultado la suma del valor del atributo indicado para todas las tuplas del conjunto.
 
 
-#### Funciones de Agrupación
+### Funciones de Agrupación
 - `GROUP BY`: Cuando se necesitan agrupar las tuplas de una consulta por algún criterio SQL prevé la cláusula GROUP BY.
 
 	```sql
@@ -285,7 +285,7 @@ Se utiliza para comprobar si una subconsulta generó o no alguna tupla como resp
 ### Productos Naturales
 Se realizan en la cláusula `FROM` indicando las tablas involucradas en el producto y luego de la sentencia `ON` la condición que debe cumplirse.
 
-#### INNER JOIN
+#### `INNER JOIN`
 Realiza el Producto Natural clásico, reuniendo las tuplas que tienen sentido
 
 ```sql
@@ -295,30 +295,30 @@ Realiza el Producto Natural clásico, reuniendo las tuplas que tienen sentido
 	INNER JOIN localidades l ON a.idlocalidad = l.idlocalidad
 ```
 
-#### LEFT JOIN
+#### `LEFT JOIN`
 Si tenemos: `Tabla1 LEFT JOIN Tabla2`.
 
 - En primera instancia se reúne cada tupla de la tabla 1 con su correspondiente tupla en la tabla2, similar al INNER JOIN. 
 - Luego, si alguna tupla de la tabla 1 no se reúne con una tupla de la tabla 2, igualmente aparece en el resultado, con los atributos de la tabla 2 con valor nulo.
 
-#### RIGHT JOIN
+#### `RIGHT JOIN`
 Genera, primero, un INNER JOIN para luego completar con las tuplas de la tabla 2 que no tienen correspondencia en la tabla.
 
 - `Tabla2 RIGHT JOIN Tabla1` es equivalente a `Tabla1 LEFT JOIN Tabla2`
 
-#### FULL JOIN
+#### `FULL JOIN`
 Genera el equivalente a un INNER JOIN, LEFT JOIN y RIGTH JOIN en conjunto. Es decir, reúne las tuplas con sentido, luego agrega las tuplas de las tabla 1 sin correspondencia en la tabla 2 y, por último, reúne las tuplas de tabla2 sin correspondencia en tabla1.
 
 ### Otras operaciones: Insertar, Borrar y Modificar.
 
-### Cláusula `INSERT INTO`
+#### Cláusula `INSERT INTO`
 Cláusula para agregar tuplas a una tabla
 
 ```sql
 	INSERT INTO alumno (dni, nombre, apellido) VALUES (2827893, ‘Raul’,'Perez');
 ```
 
-### Cláusula `DELETE FROM`
+#### Cláusula `DELETE FROM`
 Claúsula para borrar una tupla o un conjunto de tuplas de una tabla
 ```sql
 	DELETE FROM alumnos
@@ -331,7 +331,7 @@ Claúsula para borrar una tupla o un conjunto de tuplas de una tabla
 
 - Debe notarse que nuevamente la integridad referencial tendrá especial énfasis sobre la cláusula DELETE. Esto es, solamente pueden ser borradas de la tabla aquellas tuplas que cumplan las condiciones de integridad referencial definidas.
 
-### Cláusula `UPDATE ... SET`
+#### Cláusula `UPDATE ... SET`
 Se utiliza para modificar el contenido de uno o varios atributos de una tabla.
 
 ```sql

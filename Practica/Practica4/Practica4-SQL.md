@@ -164,17 +164,801 @@
 		-- La cláusula HAVING filtra los grupos (clientes) según una condición después de la agregación. En este caso, filtra aquellos grupos cuya suma total de los campos total de la tabla Factura sea mayor a 10,000,000.
 			
 	```
+	
+### Ejercicio 2
+
+**Agencia** (<u>razon_social</u>, dirección, telef, e-mail)
+
+**Ciudad** (<u>codigoPostal</u>, nombreCiudad, añoCreación)
+
+**Cliente** (<u>DNI</u>, nombre, apellido, teléfono, dirección)
+
+**Viaje** (<u>fecha, hora, dni</u>, cpOrigen(fk), cpDestino(fk), razon_social(fk), descripcion) `cpOrigen y cpDestino corresponden a la ciudades origen y destino del viaje`
+
+1. Listar razón social, dirección y teléfono de agencias que realizaron viajes desde la ciudad de ‘La Plata’ (ciudad origen) y que el cliente tenga apellido ‘Roma’. Ordenar por razón social y luego por teléfono.
+
+	```sql
+
+	-- Versión 1
+	
+		SELECT a.razon_social, a.direccion, a.telefono
+		FROM Agencia a 
+		INNER JOIN Viaje v ON a.razon_social = v.razon_social
+		INNER JOIN Ciudad ON v.cpOrigen = Ciudad.codigoPostal
+		INNER JOIN Cliente ON v.DNI = Cliente.DNI
+		WHERE (Ciudad.nombreCiudad = 'La Plata') AND (Cliente.apellido = 'Roma')
+		ORDER BY a.razon_social, a.telefono
+		
+	```
+	
+	```sql
+
+	-- Versión 2
+	
+		SELECT a.RAZON_SOCIAL, a.direccion, a.telef
+		FROM VIAJE v 
+	    INNER JOIN AGENCIA a ON (v.razon_social = a.razon_social)
+    	INNER JOIN Cliente c ON (v.DNI = c.DNI)
+		WHERE (c.apellido = "Roma") AND (v.RAZON_SOCIAL IN (
+		    SELECT v.RAZON_SOCIAL
+		    FROM VIAJE v 
+		    INNER JOIN CIUDAD c ON(v.cpOrigen = c.CODIGOPOSTAL)
+		    WHERE c.nombreCiudad = "La Plata"
+		))
+		ORDER BY a.RAZON_SOCIAL, a.telef
+		
+	```
+
+2. Listar fecha, hora, datos personales del cliente, ciudad origen y destino de viajes realizados en enero de 2019 donde la descripción del viaje contenga el String ‘demorado’.
+
+	```sql
+
+		SELECT Viaje.fecha, Viaje.hora, cli.nombre, cli.apellido, cli.telefono, cli.direccion, Ciudad.cpOrigen, Ciudad.cpDestino
+		FROM Viaje v 
+		INNER JOIN Cliente cli ON v.DNI = cli.DNI
+		INNER JOIN Ciudad cOrigen ON v.cpOrigen = cOrigen.codigoPostal
+		INNER JOIN Ciudad cDestino ON v.cpDestino = cDestino.codigoPostal
+		WHERE v.fecha BETWEEN '2019/1/1' AND '2019/12/1' AND v.descripcion LIKE '%demorado%'
+		
+		
+	```
+
+3. Reportar información de agencias que realizaron viajes durante 2019 o que tengan dirección de mail que termine con ‘@jmail.com’.
+
+	```sql
+
+		SELECT a.direccion, a.telef, a.e-mail
+		FROM Agencia a
+		INNER JOIN Viaje v ON a.razon_social = v.razon_social
+		WHERE (v.fecha BETWEEN '2019/1/1' AND '2019/12/1') OR (a.e-mail LIKE '%@jmail%')
+		
+	```
+
+4. Listar datos personales de clientes que viajaron solo con destino a la ciudad de ‘Coronel Brandsen’
+
+	```sql
+	
+	-- Versión 1
+		SELECT 	cli.nombre, cli.apellido, cli.telefono, cli.direccion
+		FROM Cliente cli
+		INNER JOIN Viaje v ON  cli.DNI = v.dni
+		INNER JOIN Ciudad c ON v.cpDestino = c.codigoPostal
+		WHERE c.nombreCiudad = 'Coronel Brandsen' AND cli.DNI NOT IN (
+			SELECT v.dni
+			FROM Viaje v
+			INNER JOIN Ciudad c ON v.cpDestino = c.codigoPostal
+			WHERE c.nombreCiudad <> 'Coronel Brandsen'
+		)
+		
+	```
+	
+	```sql
+	
+	-- Versión 2
+		SELECT cli.nombre, cli.apellido, cli.telefono, cli.direccion
+		FROM Cliente cli
+		INNER JOIN Viaje v ON  cli.DNI = v.dni
+		INNER JOIN Ciudad c ON v.cpDestino = c.codigoPostal
+		WHERE c.nombreCiudad = 'Coronel Brandsen'
+		EXCEPT 
+		SELECT cli.nombre, cli.apellido, cli.telefono, cli.direccion
+		FROM Cliente cli
+		INNER JOIN Viaje v ON  cli.DNI = v.dni
+		INNER JOIN Ciudad c ON v.cpDestino = c.codigoPostal
+		WHERE c.nombreCiudad <> 'Coronel Brandsen'
+		
+	```
+
+5. Informar cantidad de viajes de la agencia con razón social ‘TAXI Y’ realizados a ‘Villa Elisa’.
+
+	```sql
+
+		SELECT COUNT(*) AS cantViajes
+		FROM Agencia a
+		INNER JOIN Viaje v ON a.razon_social = v.razon_social
+		INNER JOIN Ciudad c ON v.cpDestino = c.codigoPostal
+		WHERE a.razon_social = 'TAXI Y' AND c.nombreCiudad = 'Villa Elisa'
+		
+	```
+
+6. Listar nombre, apellido, dirección y teléfono de clientes que viajaron con todas las agencias.
+
+	```sql
+
+				
+		
+	```
+
+7. Modificar el cliente con DNI: 38495444 actualizando el teléfono a: 221-4400897.
+
+	```sql
+
+				
+		
+	```
+
+8. Listar razon_social, dirección y teléfono de la/s agencias que tengan mayor cantidad de viajes realizados.
+
+	```sql
+
+				
+		
+	```
+
+9. Reportar nombre, apellido, dirección y teléfono de clientes con al menos 10 viajes.
+
+	```sql
+
+				
+		
+	```
+
+10. Borrar al cliente con DNI 40325692.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 3
+
+**Club** (codigoClub, nombre, anioFundacion, codigoCiudad(FK))
+
+**Ciudad** (codigoCiudad, nombre)
+
+**Estadio** (codigoEstadio, codigoClub(FK), nombre, direccion)
+
+**Jugador** (DNI, nombre, apellido, edad, codigoCiudad(FK))
+
+**ClubJugador** (codigoClub, DNI, desde, hasta)
+
+1. Reportar nombre y anioFundacion de aquellos clubes de la ciudad de La Plata que no poseen estadio.
+
+	```sql
+
+				
+		
+	```
+
+2. Listar nombre de los clubes que no hayan tenido ni tengan jugadores de la ciudad de Berisso.
+
+	```sql
+
+				
+		
+	```
+
+3. Mostrar DNI, nombre y apellido de aquellos jugadores que jugaron o juegan en el club Gimnasia y Esgrima La PLata.
+
+	```sql
+
+				
+		
+	```
+
+4. Mostrar DNI, nombre y apellido de aquellos jugadores que tengan más de 29 años y
+hayan jugado o juegan en algún club de la ciudad de Córdoba.
+
+	```sql
+
+				
+		
+	```
+
+5. Mostrar para cada club, nombre de club y la edad promedio de los jugadores que juegan actualmente en cada uno.
+
+	```sql
+
+				
+		
+	```
+
+6. Listar para cada jugador: nombre, apellido, edad y cantidad de clubes diferentes en los que jugó. (incluido el actual).
+
+	```sql
+
+				
+		
+	```
+
+7. Mostrar el nombre de los clubes que nunca hayan tenido jugadores de la ciudad de Mar del Plata.
+
+	```sql
+
+				
+		
+	```
+
+8. Reportar el nombre y apellido de aquellos jugadores que hayan jugado en todos los clubes.
+
+	```sql
+
+				
+		
+	```
+
+9. Agregar con codigoClub 1234 el club “Estrella de Berisso” que se fundó en 1921 y que pertenece a la ciudad de Berisso. Puede asumir que el codigoClub 1234 no existe en la tabla Club.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 4
+
+**PERSONA** (DNI, Apellido, Nombre, Fecha_Nacimiento, Estado_Civil, Genero)
+
+**ALUMNO** (DNI, Legajo, Año_Ingreso)
+
+**PROFESOR** (DNI, Matricula, Nro_Expediente)
+
+**TITULO** (Cod_Titulo, Nombre, Descripción)
+
+**TITULO-PROFESOR** (Cod_Titulo, DNI, Fecha)
+
+**CURSO** (Cod_Curso, Nombre, Descripción, Fecha_Creacion, Duracion)
+
+**ALUMNO-CURSO** (DNI, Cod_Curso, Año, Desempeño, Calificación)
+
+**PROFESOR-CURSO** (DNI, Cod_Curso, Fecha_Desde, Fecha_Hasta)
+
+1. Listar DNI, legajo y apellido y nombre de todos los alumnos que tegan año ingreso inferior a 2014.
+
+	```sql
+
+				
+		
+	```
+
+2. Listar DNI, matricula, apellido y nombre de los profesores que dictan cursos que tengan más 100 horas de duración. Ordenar por DNI.
+
+	```sql
+
+				
+		
+	```
+
+3. Listar el DNI, Apellido, Nombre, Género y Fecha de nacimiento de los alumnos inscriptos al curso con nombre “Diseño de Bases de Datos” en 2019.
+
+	```sql
+
+				
+		
+	```
+
+4. Listar el DNI, Apellido, Nombre y Calificación de aquellos alumnos que obtuvieron una calificación superior a 9 en los cursos que dicta el profesor “Juan Garcia”. Dicho listado deberá estar ordenado por Apellido.
+
+	```sql
+
+				
+		
+	```
+
+5. Listar el DNI, Apellido, Nombre y Matrícula de aquellos profesores que posean más de 3 títulos. Dicho listado deberá estar ordenado por Apellido y Nombre.
+
+	```sql
+
+				
+		
+	```
+
+6. Listar el DNI, Apellido, Nombre, Cantidad de horas y Promedio de horas que dicta cada profesor. La cantidad de horas se calcula como la suma de la duración de todos los cursos que dicta.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar Nombre, Descripción del curso que posea más alumnos inscriptos y del que posea menos alumnos inscriptos durante 2019.
+
+	```sql
+
+				
+		
+	```
+
+8. Listar el DNI, Apellido, Nombre, Legajo de alumnos que realizaron cursos con nombre conteniendo el string ‘BD’ durante 2018 pero no realizaron ningún curso durante 2019.
+
+	```sql
+
+				
+		
+	```
+
+9. Agregar un profesor con los datos que prefiera y agregarle el título con código: 25.
+
+	```sql
+
+				
+		
+	```
+
+10. Modificar el estado civil del alumno cuyo legajo es ‘2020/09’, el nuevo estado civil es divorciado.
+
+	```sql
+
+				
+		
+	```
+
+11. Dar de baja el alumno con DNI 30568989. Realizar todas las bajas necesarias para no dejar el conjunto de relaciones en estado inconsistente.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 5
+
+**Localidad** (CodigoPostal, nombreL, descripcion, #habitantes)
+
+**Arbol** (nroArbol, especie, años, calle, nro, codigoPostal(fk))
+
+**Podador** (DNI, nombre, apellido, telefono,fnac,codigoPostalVive(fk))
+
+**Poda** (codPoda,fecha, DNI(fk),nroArbol(fk))
+
+1. Listar especie, años, calle, nro. y localidad de árboles podados por el podador ‘Juan Perez’ y por el podador ‘Jose Garcia’.
+
+	```sql
+
+				
+		
+	```
+
+2. Reportar DNI, nombre, apellido, fnac y localidad donde viven podadores que tengan podas durante 2018.
+
+	```sql
+
+				
+		
+	```
+
+3. Listar especie, años, calle, nro y localidad de árboles que no fueron podados nunca.
+
+	```sql
+
+				
+		
+	```
+
+4. Reportar especie, años,calle, nro y localidad de árboles que fueron podados durante 2017 y no fueron podados durante 2018.
+
+	```sql
+
+				
+		
+	```
+
+5. Reportar DNI, nombre, apellido, fnac y localidad donde viven podadores con apellido terminado con el string ‘ata’ y que el podador tenga al menos una poda durante 2018. Ordenar por apellido y nombre.
+
+	```sql
+
+				
+		
+	```
+
+6. Listar DNI, apellido, nombre, teléfono y fecha de nacimiento de podadores que solo podaron árboles de especie ‘Coníferas’.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar especie de árboles que se encuentren en la localidad de ‘La Plata’ y también en la localidad de ‘Salta’.
+
+	```sql
+
+				
+		
+	```
+
+8. Eliminar el podador con DNI: 22234566.
+
+	```sql
+
+				
+		
+	```
+
+9. Reportar nombre, descripción y cantidad de habitantes de localidades que tengan menos de 100 árboles.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 6
+
+**Técnico** (codTec, nombre, especialidad) `técnicos`
+
+**Repuesto** (codRep, nombre, stock, precio)  `repuestos`
+
+**RepuestoReparacion** (nroReparac, codRep, cantidad, precio) `repuestos utilizados en reparaciones.`
+
+**Reparación** (nroReparac, codTec, precio_total, fecha) `reparaciones realizadas.`
+
+1. Listar todos los repuestos, informando el nombre, stock y precio. Ordenar el
+resultado por precio.
+
+	```sql
+
+				
+		
+	```
+
+2. Listar nombre, stock, precio de repuesto que participaron en reparaciones durante 2019 y además no participaron en reparaciones del técnico ‘José Gonzalez’.
+
+	```sql
+
+				
+		
+	```
+
+3. Listar el nombre, especialidad de técnicos que no participaron en ninguna
+reparación. Ordenar por nombre ascendentemente.
+
+	```sql
+
+				
+		
+	```
+
+4. Listar el nombre, especialidad de técnicos solo participaron en reparaciones durante 2018.
+
+	```sql
+
+				
+		
+	```
+
+5. Listar para cada repuesto nombre, stock y cantidad de técnicos distintos que lo utilizaron. Si un repuesto no participó en alguna reparación igual debe aparecer en dicho listado.
+
+	```sql
+
+				
+		
+	```
+
+6. Listar nombre y especialidad del técnico con mayor cantidad de reparaciones
+realizadas y el técnico con menor cantidad de reparaciones.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar nombre, stock y precio de todos los repuestos con stock mayor a 0 y que
+dicho repuesto no haya estado en reparaciones con precio_total superior a 10000.
+
+	```sql
+
+				
+		
+	```
+
+8. Proyectar precio, fecha y precio total de aquellas reparaciones donde se utilizó algún repuesto con precio en el momento de la reparación mayor a $1000 y menor a
+$5000.
+
+	```sql
+
+				
+		
+	```
+
+9. Listar nombre, stock y precio de repuestos que hayan sido utilizados en todas las reparaciones.
+
+	```sql
+
+				
+		
+	```
+
+10. Listar fecha, técnico y precio total de aquellas reparaciones que necesitaron al menos 10 repuestos distintos.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 7
+
+**Banda** (codigoB, nombreBanda, genero_musical, año_creacion)
+
+**Integrante** (DNI, nombre, apellido,dirección,email, fecha_nacimiento,codigoB(fk))
+
+**Escenario** (nroEscenario, nombre _ escenario, ubicación,cubierto, m2, descripción)
+
+**Recital** (fecha,hora,nroEscenario, codigoB (fk))
+
+1. Listar DNI, nombre, apellido,dirección y email de integrantes nacidos entre 1980 y 1990 y hayan realizado algún recital durante 2018.
+
+	```sql
+
+				
+		
+	```
+
+2. Reportar nombre, género musical y año de creación de bandas que hayan realizado
+recitales durante 2018, pero no hayan tocado durante 2017 .
+
+	```sql
+
+				
+		
+	```
+
+3. Listar el cronograma de recitales del dia 04/12/2018. Se deberá listar: nombre de la banda que ejecutará el recital, fecha, hora, y el nombre y ubicación del escenario correspondiente.
+
+	```sql
+
+				
+		
+	```
+
+4. Listar DNI, nombre, apellido,email de integrantes que hayan tocado en el escenario con nombre ‘Gustavo Cerati’ y en el escenario con nombre ‘Carlos Gardel’.
+
+	```sql
+
+				
+		
+	```
+
+5. Reportar nombre, género musical y año de creación de bandas que tengan más de 8
+integrantes.
+
+	```sql
+
+				
+		
+	```
+
+6. Listar nombre de escenario, ubicación y descripción de escenarios que solo tuvieron recitales con género musical rock and roll. Ordenar por nombre de escenario.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar nombre, género musical y año de creación de bandas que hayan realizado recitales en escenarios cubiertos durante 2018. `cubierto es true, false según corresponda.`
+
+	```sql
+
+				
+		
+	```
+
+8. Reportar para cada escenario, nombre del escenario y cantidad de recitales durante 2018.
+
+	```sql
+
+				
+		
+	```
+
+9. Modificar el nombre de la banda ‘Mempis la Blusera’ a: ‘Memphis la Blusera’.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 8
+
+**Equipo** (codigoE, nombreE, descripcionE)
+
+**Integrante** (DNI, nombre, apellido,ciudad,email, telefono,codigoE(fk))
+
+**Laguna** (nroLaguna, nombreL, ubicación,extension, descripción)
+
+**TorneoPesca** (codTorneo, fecha,hora,nroLaguna(fk), descripcion)
+
+**Inscripcion** (codTorneo,codigoE,asistio, gano) `asistio y gano son true o false según corresponda`
+
+1. Listar DNI, nombre, apellido y email de integrantes que sean de la ciudad ‘La Plata’ y estén inscriptos en torneos a disputarse durante 2019.
+
+	```sql
+
+				
+		
+	```
+
+2. Reportar nombre y descripción de equipos que solo se hayan inscripto en torneos de 2018.
+
+	```sql
+
+				
+		
+	```
+
+3. Listar DNI, nombre, apellido,email y ciudad de integrantes que asistieron a torneos en la laguna con nombre ‘La Salada, Coronel Granada’ y su equipo no tenga inscripciones a torneos a disputarse en 2019.
+
+	```sql
+
+				
+		
+	```
+
+4. Reportar nombre, y descripción de equipos que tengan al menos 5 integrantes.Ordenar por nombre y descripción.
+
+	```sql
+
+				
+		
+	```
+
+5. Reportar nombre, y descripción de equipos que tengan inscripciones en todas las lagunas.
+
+	```sql
+
+				
+		
+	```
+
+6. Eliminar el equipo con código: 10000.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar nombreL, ubicación,extensión y descripción de lagunas que no tuvieron torneos.
+
+	```sql
+
+				
+		
+	```
+
+8. Reportar nombre, y descripción de equipos que tengan inscripciones a torneos a disputarse durante 2019, pero no tienen inscripciones a torneos de 2018.
+
+	```sql
+
+				
+		
+	```
+
+9. Listar DNI, nombre, apellido, ciudad y email de integrantes que ganaron algún torneo que se disputó en la laguna con nombre: ‘Laguna de Chascomús’.
+
+	```sql
+
+				
+		
+	```
+
+
+### Ejercicio 9
+
+**Proyecto** (codProyecto, nombrP,descripcion, fechaInicioP, fechaFinP, fechaFinEstimada,DNIResponsable, equipoBackend, equipoFrontend) `DNIResponsable corresponde a un empleado, equipoBackend y equipoFrontend corresponden a un equipo`
+
+**Equipo** (codEquipo, nombreE, descripcionTecnologias,DNILider) `DNILider corresponde a un empleado`
+
+**Empleado** (DNI,nombre, apellido, telefono, direccion, fechaIngreso)
+
+**Empleado_Equipo** (codEquipo,DNI, fechaInicio, fechaFin,descripcionRol)
+
+1. Listar nombre, descripción, fecha de inicio y fecha de fin de proyectos ya finalizados que no fueron terminados antes de la fecha de fin estimada.
+
+	```sql
+
+				
+		
+	```
+
+2. Listar DNI, nombre, apellido, telefono, dirección y fecha de ingreso de empleados que no son, ni fueron responsables de proyectos. Ordenar por apellido y nombre.
+
+	```sql
+
+				
+		
+	```
+
+3. Listar DNI, nombre, apellido, teléfono y dirección de líderes de equipo que tenga más de un equipo a cargo.
+
+	```sql
+
+				
+		
+	```
+
+4. Listar DNI, nombre, apellido, teléfono y dirección de todos los empleados que trabajan en el proyecto con nombre ‘Proyecto X’. No es necesario informar responsable y líderes.
+
+	```sql
+
+				
+		
+	```
+
+5. Listar nombre de equipo y datos personales de líderes de equipos que no tengan empleados asignados y trabajen con tecnología ‘Java’.
+
+	```sql
+
+				
+		
+	```
+
+6. Modificar nombre, apellido y dirección del empleado con DNI: 40568965 con los datos que desee.
+
+	```sql
+
+				
+		
+	```
+
+7. Listar DNI, nombre, apellido, teléfono y dirección de empleados que son responsables de proyectos pero no han sido líderes de equipo.
+
+	```sql
+
+				
+		
+	```
+
+8. Listar nombre de equipo y descripción de tecnologías de equipos que hayan sido asignados como equipos frontend y backend.
+
+	```sql
+
+				
+		
+	```
+
+9. Listar nombre, descripción, fecha de inicio, nombre y apellido de responsables de proyectos a finalizar durante 2019.
+
+	```sql
+
+				
+		
+	```
+
+
+	
 ### Ejercicio 10
 
-**Vehiculo** = (patente, modelo, marca, peso, km)
+**Vehiculo** (patente, modelo, marca, peso, km)
 
-**Camion** = (patente, largo, max_toneladas, cant_ruedas, tiene_acoplado)
+**Camion** (patente, largo, max_toneladas, cant_ruedas, tiene_acoplado)
 
-**Auto** = (patente, es_electrico, tipo_motor)
+**Auto** (patente, es_electrico, tipo_motor)
 
-**Service** = (fecha, patente, km_service, observaciones, monto)
+**Service** (fecha, patente, km_service, observaciones, monto)
 
-**Parte** = (cod_parte, nombre, precio_parte)
+**Parte** (cod_parte, nombre, precio_parte)
 
 **Service_Parte** = (fecha, patente, cod_parte, precio)
 
