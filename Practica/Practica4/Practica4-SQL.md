@@ -285,9 +285,21 @@
 
 	```sql
 
-				
+		SELECT cli.nombre, cli.apellido, cli.telefono, cli.direccion
+		FROM Cliente cli
+		WHERE NOT EXISTS (
+			SELECT a.razon_social
+			FROM Agencia a
+			WHERE NOT EXISTS (
+				SELECT v.dni
+				FROM Viaje v 
+				WHERE cli.DNI = v.dni AND v.razon_social = a.razon_social
+			)
+		)
 		
 	```
+
+
 
 7. Modificar el cliente con DNI: 38495444 actualizando el teléfono a: 221-4400897.
 
@@ -301,7 +313,15 @@
 
 	```sql
 
-				
+		SELECT a.RAZON_SOCIAL, a.direccion, a.telef
+		FROM Agencia a 
+		INNER JOIN Viaje v ON a.razon_social = v.razon_social
+		GROUP BY a.razon_social, a.direccion, a.telef
+		HAVING COUNT(*) >= ALL (
+			SELECT COUNT(*)
+			FROM Viaje v
+			GROUP BY v.razon_social
+		)
 		
 	```
 
@@ -337,8 +357,26 @@
 1. Reportar nombre y anioFundacion de aquellos clubes de la ciudad de La Plata que no poseen estadio.
 
 	```sql
-
-				
+	
+	-- Versión 1
+		SELECT cl.nombre, cl.anioFundacion
+		FROM Club cl
+		LEFT JOIN Ciudad ci ON cl.codigoCiudad = ci.codigoCiudad
+		LEFT JOIN Estadio e ON cl.codigoClub = e.codigoClub
+		WHERE ci.nombre = 'La Plata' AND e.codigoEstadio IS NULL		
+		
+	```
+	
+	```sql
+	
+	-- Versión 2
+		SELECT cl.nombre, cl.anioFundacion
+		FROM Club cl
+		INNER JOIN Ciudad ci ON cl.codigoCiudad = ci.codigoCiudad
+		WHERE ci.nombre = 'La Plata' AND c.CodigoClub NOT IN (
+			SELECT e.codigoClub
+			FROM Estadio e
+		)
 		
 	```
 
@@ -346,24 +384,102 @@
 
 	```sql
 
-				
+		SELECT cl.nombre
+		FROM Club cl
+		LEFT JOIN ClubJugador clj ON cl.codigoClub = clj.codigoClub
+		WHERE clj.DNI NOT IN (
+			SELECT j.DNI
+			FROM Jugador j 
+			INNER JOIN Ciudad ci ON j.codigoCiudad = ci.codigoCiudad
+			WHERE ci.nombre = 'Berisso'
+		)
 		
 	```
 
-3. Mostrar DNI, nombre y apellido de aquellos jugadores que jugaron o juegan en el club Gimnasia y Esgrima La PLata.
+3. Mostrar DNI, nombre y apellido de aquellos jugadores que jugaron o juegan en el club Gimnasia y Esgrima La Plata.
+
+	```sql
+	
+	-- Versión 1
+	
+		SELECT j.DNI, j.nombre, j.apellido
+		FROM Jugador j
+		INNER JOIN ClubJugador clj ON j.DNI = clj.DNI
+		WHERE clj.codigoClub IN (
+			SELECT cl.codigoClub
+			FROM Club cl
+			WHERE cl.nombre = 'Gimnasia y Esgrima La Plata'
+		)
+		
+	```
+	
+	```sql
+	
+	-- Versión 2
+	
+		SELECT j.DNI, j.nombre, j.apellido
+		FROM Jugador j
+		INNER JOIN ClubJugador clj ON j.DNI = clj.DNI
+		INNER JOIN Club cl ON clj.codigoClub = cl.codigoClub
+		WHERE cl.nombre = 'Gimnasia y Esgrima La Plata'
+				
+	```
+
+4. Mostrar DNI, nombre y apellido de aquellos jugadores que tengan más de 29 años y hayan jugado o juegan en algún club de la ciudad de Córdoba.
 
 	```sql
 
-				
+	-- Versión 1
+	
+		SELECT j.DNI, j.nombre, j.apellido
+		FROM Jugador j
+		INNER JOIN ClubJugador clj ON j.DNI = clj.DNI
+		-- NATURAL JOIN Club clj
+		INNER JOIN Club cl ON clj.codigoClub = cl.codigoClub
+		-- NATURAL JOIN Club cl
+		INNER JOIN Ciudad ci ON cl.codigoCiudad = ci.codigoCiudad
+		-- NATURAL JOIN Ciudad ci
+		WHERE j.edad > 29 AND ci.nombre = 'Córdoba'
 		
 	```
 
-4. Mostrar DNI, nombre y apellido de aquellos jugadores que tengan más de 29 años y
-hayan jugado o juegan en algún club de la ciudad de Córdoba.
 
 	```sql
 
-				
+	-- Versión 2
+	
+		SELECT j.DNI, j.nombre, j.apellido
+		FROM Jugador j
+		WHERE j.edad > 29 AND j.DNI IN (
+			SELECT clj.DNI
+			FROM ClubJugador clj 
+			INNER JOIN Club cl ON clj.codigoClub = cl.codigoClub
+			INNER JOIN Ciudad ci ON cl.codigoCiudad = ci.codigoCiudad
+			WHERE ci.nombre = 'Córdoba'
+		)				
+		
+	```
+	
+	
+	```sql
+	
+	-- Versión 3
+	
+		SELECT j.DNI, j.nombre, j.apellido
+		FROM Jugador j
+		WHERE j.edad > 29 AND j.DNI IN (
+			SELECT clj.DNI
+			FROM ClubJugador clj
+			WHERE clj.codigoClub IN (
+				SELECT cl.codigoClub
+				FROM Club cl
+				WHERE cl.codigoCiudad IN (
+					SELECT ci.codigoCiudad
+					FROM Ciudad ci
+					WHERE ci.nombre = 'Córdoba'
+				)
+			)
+		)
 		
 	```
 
@@ -371,15 +487,25 @@ hayan jugado o juegan en algún club de la ciudad de Córdoba.
 
 	```sql
 
-				
+		SELECT cl.nombre, AVG(j.edad) AS promedioEdad
+		FROM Club cl
+		INNER JOIN ClubJugador clj ON cl.codigoClub = clj.codigoClub
+		INNER JOIN Jugador j ON clj.DNI = j.DNI
+		WHERE clj.hasta IN NULL
+		GROUP BY cl.nombre;
 		
 	```
+	
+	
 
 6. Listar para cada jugador: nombre, apellido, edad y cantidad de clubes diferentes en los que jugó. (incluido el actual).
 
 	```sql
 
-				
+		SELECT j.nombre, j.apellido, j.edad, COUNT(DISTINCT clj.codigoClub) AS cantClubes
+		FROM Jujador j
+		INNER JOIN ClubJugador clj ON j.DNI = clj.DNI
+		GROUP BY j.DNI, j.nombre, j.apellido, j.edad;
 		
 	```
 
@@ -387,9 +513,33 @@ hayan jugado o juegan en algún club de la ciudad de Córdoba.
 
 	```sql
 
+		SELECT cl.nombre
+		FROM Club cl
+		INNER JOIN ClubJugador clj
+		WHERE clj.DNI NOT IN (
+			SELECT j.DNI
+			FROM Jugador j
+			INNER JOIN Ciudad ci ON j.codigoCiudad = ci.codigoCiudad
+			WHERE ci.nombre 'Mar del Plata'
+		)
+		
+	```
+	
+	```sql
+		
+		SELECT cl.nombre
+		FROM Club cl
+		WHERE cl.codigoClub NOT IN (
+			SELECT clj.codigoClub
+			FROM ClubJugador clj
+			INNER JOIN Jugador j ON clj.DNI = j.DNI
+			INNER JOIN Ciudad ci ON j.codigoCiudad = ci.codigoCiudad
+			WHERE ci.nombre 'Mar del Plata'
+		)
 				
 		
 	```
+	
 
 8. Reportar el nombre y apellido de aquellos jugadores que hayan jugado en todos los clubes.
 

@@ -44,10 +44,8 @@ Las siguientes consultas son equivalentes:
 Permite reemplazar la escritura literal de todos los atributos de las tablas involucradas.
 
 ```sql
-
 	SELECT *
 	FROM alumnos
-
 ```
 	
 #### Operadores `DISTINCT` y `ALL`.
