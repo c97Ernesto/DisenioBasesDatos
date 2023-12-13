@@ -545,7 +545,18 @@
 
 	```sql
 
-				
+		SELECT j.nombre, j.apellido
+		FROM Jugador j
+		WHERE NOT EXISTS (
+			SELECT cl.codigoClub
+			FROM Club cl
+			WHERE NOT EXISTS (
+				SELECT clj.codigoClub
+				FROM ClubJugador clj
+				WHERE clj.DNI = j.DNI AND clj.codigoClub = cl.codigoClub
+			)
+		)
+
 		
 	```
 
@@ -553,34 +564,43 @@
 
 	```sql
 
-				
+		INSERT INTO Club (codigoClub, DNI, desde, hasta)
+		VALUES (1234, 'Estrella de Berisso', 1921, (
+				SELECT c.codigoCiudad
+				FROM Ciudad ci
+				WHERE ci.nombre = 'Berisso'
+			)
+		)
 		
 	```
 
 
 ### Ejercicio 4
 
-**PERSONA** (DNI, Apellido, Nombre, Fecha_Nacimiento, Estado_Civil, Genero)
+**Persona** (DNI, apellido, nomrbe, fecha_nacimiento, estado_civil, genero)
 
-**ALUMNO** (DNI, Legajo, Año_Ingreso)
+**Alumno** (DNI, legajo, anio_ingreso)
 
-**PROFESOR** (DNI, Matricula, Nro_Expediente)
+**Profesor** (DNI, matricula, nro_expediente)
 
-**TITULO** (Cod_Titulo, Nombre, Descripción)
+**Titulo** (Cod_Titulo, nombre, descripcion)
 
-**TITULO-PROFESOR** (Cod_Titulo, DNI, Fecha)
+**Titulo-Profesor** (Cod_Titulo, DNI, fecha)
 
-**CURSO** (Cod_Curso, Nombre, Descripción, Fecha_Creacion, Duracion)
+**Curso** (Cod_Curso, nombre, descripcion, fecha_creacion, duracion)
 
-**ALUMNO-CURSO** (DNI, Cod_Curso, Año, Desempeño, Calificación)
+**Alumno-Curso** (DNI, Cod_Curso, anio, desempenio, calificacion)
 
-**PROFESOR-CURSO** (DNI, Cod_Curso, Fecha_Desde, Fecha_Hasta)
+**Profesor-Curso** (DNI, Cod_Curso, fecha_desde, fecha_hasta)
 
 1. Listar DNI, legajo y apellido y nombre de todos los alumnos que tegan año ingreso inferior a 2014.
 
 	```sql
 
-				
+		SELECT p.DNI, a.legajo, p.apellido, p.nombre
+		FROM Persona p
+		NATURAL JOIN Alumno a
+		WHERE a.anio_ingreso < 2014
 		
 	```
 
@@ -588,15 +608,94 @@
 
 	```sql
 
-				
+	-- Versión 1
+	
+		SELECT pro.DNI, pro.matricula, per.apellido, per.nombre
+		From Persona per
+		INNER JOIN Profesor pro ON per.DNI = pro.DNI
+		INNER JOIN Profesor-Curso proC ON pro.DNI = proC.DNI
+		INNER JOIN Curso c ON proC.Cod_Curso = c.Cod_Curso
+		WHERE c.duracion > 100
+		ORDER BY pro.DNI;
 		
 	```
+	
+	```sql
+	
+	-- Versión 2
+
+		SELECT pro.DNI, pro.matricula, per.apellido, per.nombre
+		From Persona per
+		WHERE per.DNI IN (
+			SELECT pro.DNI
+			FROM Profesor pro
+			WHERE pro.DNI IN (
+				SELECT proC.DNI
+				FROM Profesor-Curso proC
+				WHERE proC.Cod_Curso IN (
+					SELECT c.Cod_Curso
+					FROM Curso c
+					WHERE c.duracion > 100
+				)
+			)
+		)
+		ORDER BY per.DNI
+		
+	```
+	
+	```sql
+	
+	-- Versión 3
+
+		SELECT pro.DNI, pro.matricula, per.apellido, per.nombre
+		FROM Profesor pro
+		INNER JOIN Persona per ON pro.DNI = per.DNI
+		INNER JOIN Profesor-Curso proC ON pro.DNI = proC.DNI
+		WHERE proC.Cod_Curso IN (
+			SELECT c.Cod_Curso
+			FROM Curso c
+			WHERE c.duracion > 100
+		)
+		ORDER BY pro.DNI
+
+	```
+
+
 
 3. Listar el DNI, Apellido, Nombre, Género y Fecha de nacimiento de los alumnos inscriptos al curso con nombre “Diseño de Bases de Datos” en 2019.
 
 	```sql
+	
+	-- Versión 1
 
-				
+		SELECT per.DNI, per.apellido, per.nombre, per.genero, per.Fecha_Nacimiento
+		FROM Persona per
+		WHERE per.DNI IN (
+			SELECT a.DNI
+			FROM Alumno a
+			WHERE a.DNI IN (
+				SELECT ac.DNI
+				FROM Alumno-Curso ac
+				WHERE ac.anio = 2019 AND ac.Cod_Curso IN (
+					SELECT c.Cod_Curso
+					FROM Curso c
+					WHERE c.nombre = 'Diseño de Bases de Datos'
+				)
+			)
+		)
+		
+	```
+	
+		```sql
+	
+	-- Versión 1
+
+		SELECT per.DNI, per.apellido, per.nombre, per.genero, per.Fecha_Nacimiento
+		FROM Persona per
+		INNER JOIN Alumno a ON per.DNI = a.DNI
+		INNER JOIN Alumno-Curso ac ON a.DNI = ac.DNI
+		INNER JOIN Curso c ON ac.Cod_Curso = c.Cod_Curso
+		WHERE ac.anio = 2019 AND c.nombre = 'Diseño de Bases de Datos'
 		
 	```
 
@@ -604,7 +703,15 @@
 
 	```sql
 
-				
+			SELECT per.DNI, per.apellido, per.nombre, ac.calificacion
+			FROM Persona perAlumno
+			INNER JOIN Alumno a ON per.DNI = a.DNI
+			INNER JOIN Alumno-Curso ac ON a.DNI = ac.DNI
+			INNER JOIN Profesor-Curso pc ON ac.Cod_Curso = pc.Cod_Curso
+			INNER JOIN Profesor pro ON pc.DNI = pro.DNI
+			INNER JOIN Persona perProfesor ON pro.DNI = perProfesor.DNI
+			WHERE ac.calificacion > 9 AND perProfesor.nombre = "Juan" AND perProfesor.apellido = "Garcia"
+			ORDER BY per.apellido
 		
 	```
 
@@ -612,7 +719,13 @@
 
 	```sql
 
-				
+		SELECT per.DNI, per.apellido, per.nombre, pro.matricula
+		FROM Persona per
+		INNER JOIN Profesor pro ON per.DNI = pro.DNI
+		INNER JOIN Titulo-Profesor tp ON pro.DNI = tp.DNI
+		GROUP BY per.DNI
+		HAVING COUNT (tp.Cod_Titulo) > 3
+		ORDER BY per.apellido, per.nombre
 		
 	```
 
@@ -620,7 +733,12 @@
 
 	```sql
 
-				
+		SELECT per.DNI, per.apellido, per.nombre, SUM(c.duracion) AS cantHoras, AVG(c.duracion) AS promHoras
+		FROM Persona per
+		INNER JOIN Profesor pro ON per.DNI = pro.DNI
+		INNER JOIN Profesor-Curso pc ON pro.DNI = pc.DNI
+		INNER JOIN Curso c ON pc.Cod_Curso = c.Cod_Curso
+		GROUP BY per.DNI, per.apellido, per.nombre
 		
 	```
 
@@ -628,23 +746,81 @@
 
 	```sql
 
-				
+		-- Curso con menos alumnos inscriptos
+		SELECT c.nombre, c.descripcion
+		FROM Curso c
+		INNER JOIN Alumno-Curso ac ON c.Cod_Curso = ac.Cod_Curso
+		WHERE ac.anio = 2019
+		GROUP BY c.Cod_Curso, c.nombre, c.descripcion
+		HAVING COUNT(ac.DNI) <= ALL (
+			SELECT COUNT(ac1.DNI)
+			FROM Alumno-Curso ac1
+			WHERE ac1.anio = 2019
+			GROUP BY ac1.Cod_Curso
+		)
+
+		UNION
+
+		-- Curso con más alumnos inscriptos
+		SELECT c.nombre, c.descripcion
+		FROM Curso c
+		INNER JOIN Alumno-Curso ac ON c.Cod_Curso = ac.Cod_Curso
+		WHERE ac.anio = 2019
+		GROUP BY c.Cod_Curso, c.nombre, c.descripcion
+		HAVING COUNT(ac.DNI) >= ALL (
+			SELECT COUNT(ac2.DNI)
+			FROM Alumno-Curso ac2
+			WHERE ac2.anio = 2019
+			GROUP BY ac2.Cod_Curso
+		)
+
 		
 	```
 
 8. Listar el DNI, Apellido, Nombre, Legajo de alumnos que realizaron cursos con nombre conteniendo el string ‘BD’ durante 2018 pero no realizaron ningún curso durante 2019.
 
 	```sql
+	
+	-- Versión 1
 
-				
+		SELECT	per.DNI, per.apellido, per.nombre, a.legajo
+		FROM Persona per
+		INNER JOIN Alumno a ON per.DNI = a.DNI
+		INNER JOIN Alumno-Curso ac ON a.DNI = ac.DNI
+		INNER JOIN Curso c ON ac.Cod_Curso = c.Cod_Curso
+		WHERE c.nombre LIKE '%BD%' AND ac.anio = 2018 AND a.DNI NOT IN (
+			SELECT ac2.DNI
+			FROM Alumo-Curso ac2
+			WHERE ac2.anio = 2019
+		)
 		
 	```
+	
+	```sql
+	
+	-- Versión 2
+
+		SELECT	per.DNI, per.apellido, per.nombre, a.legajo
+		FROM Persona per
+		INNER JOIN Alumno a ON per.DNI = a.DNI
+		INNER JOIN Alumno-Curso ac ON a.DNI = ac.DNI
+		INNER JOIN Curso c ON ac.Cod_Curso = c.Cod_Curso
+		WHERE c.nombre LIKE '%BD%' AND ac.anio = 2018
+		EXCEPT
+		SELECT per.DNI, per.apellido, per.nombre, a.legajo
+		FROM Persona per
+		INNER JOIN Alumno a ON per.DNI = a.DNI
+		INNER JOIN Alumno-Curso ac ON a.DNI = ac.DNI
+		WHERE ac.anio = 2019
+		
+	```
+
 
 9. Agregar un profesor con los datos que prefiera y agregarle el título con código: 25.
 
 	```sql
 
-				
+		SELECT				
 		
 	```
 
@@ -652,7 +828,7 @@
 
 	```sql
 
-				
+		SELECT				
 		
 	```
 
