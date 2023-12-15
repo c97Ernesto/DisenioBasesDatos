@@ -279,6 +279,11 @@ Se utiliza para comprobar si una subconsulta generó o no alguna tupla como resp
 		WHERE a.idalumno = i.idalumno
 	)
 ```
+
+- Se puede utilizar NOT IN en lugar NOT EXISTS en algunas situaciones, pero:
+	- Manejan los valores NULL de manera diferente. 
+	- Si la subconsulta devuelve al menos un valor NULL, entonces la cláusula NOT IN devolverá falso para todas las filas, incluso si hay coincidencias para otros valores. 
+	- Por otro lado, NOT EXISTS simplemente ignora los valores NULL.
  
 ### Productos Naturales
 Se realizan en la cláusula `FROM` indicando las tablas involucradas en el producto y luego de la sentencia `ON` la condición que debe cumplirse.

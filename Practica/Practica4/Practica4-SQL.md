@@ -820,7 +820,14 @@
 
 	```sql
 
-		SELECT				
+		INSERT INTO Persona (DNI, apellido, nombre, fecha_nacimiento, estado_civil, genero)
+		VALUES (23444333, Polo, Marco, 2/2/1976, 'casado', 'Masculino')
+		
+		INSERT INTO Profesor (DNI, matricula, nro_expediente)
+		VALUES (23444333, 3232, 32)
+		
+		INSERT INTO Titulo-Profesor (Cod_Titulo, DNI, fecha)
+		VALUES (25, 23444333, "23/12/1998")
 		
 	```
 
@@ -828,7 +835,13 @@
 
 	```sql
 
-		SELECT				
+		UPDATE Persona p
+		SET estado_civil = 'divorciado'
+		WHERE p.DNI IN (
+			SELECT a.DNI
+			FROM Alumno a
+			WHERE a.legajo = '2020/09'
+		)
 		
 	```
 
@@ -843,19 +856,52 @@
 
 ### Ejercicio 5
 
-**Localidad** (CodigoPostal, nombreL, descripcion, #habitantes)
+**Localidad** (CodigoPostal, nombreL, descripcion, numHabitantes)
 
-**Arbol** (nroArbol, especie, años, calle, nro, codigoPostal(fk))
+**Arbol** (nroArbol, especie, anios, calle, nro, codigoPostal(fk))
 
-**Podador** (DNI, nombre, apellido, telefono,fnac,codigoPostalVive(fk))
+**Podador** (DNI, nombre, apellido, telefono, fnac, codigoPostalVive(fk))
 
 **Poda** (codPoda,fecha, DNI(fk),nroArbol(fk))
 
 1. Listar especie, años, calle, nro. y localidad de árboles podados por el podador ‘Juan Perez’ y por el podador ‘Jose Garcia’.
 
 	```sql
+	
+	-- Versión 1
 
-				
+		SELECT a.especie, a.años, a.calle, a.nro, l.nombreL
+		FROM Arbol a 
+		INNER JOIN Localidad l ON a.codigoPostal = l.CodigoPostal
+	    INNER JOIN Poda ON a.nroArbol = Poda.nroArbol
+	    INNER JOIN Podador p ON Poda.DNI = p.DNI
+		WHERE p.nombre = "Juan" AND p.apellido = "Perez" AND a.nroArbol IN (
+		    SELECT Poda.nroArbol
+	    	FROM Poda 
+    	    INNER JOIN Podador p ON (Poda.DNI = p.DNI)
+		    WHERE p.nombre = "Jose" AND p.apellido = "Garcia"
+    	)
+
+	```
+	
+	
+	```sql
+
+	--Versión 2
+	
+		SELECT a.especie, a.años, a.calle, a.nro, l.nombreL
+		FROM Arbol a 
+		INNER JOIN Localidad l ON a.codigoPostal = l.CodigoPostal
+	    INNER JOIN Poda ON a.nroArbol = Poda.nroArbol
+	    INNER JOIN Podador p ON Poda.DNI = p.DNI
+		WHERE p.nombre = "Juan" AND p.apellido = "Perez"
+		INTERSECT
+		SELECT a.especie, a.años, a.calle, a.nro, l.nombreL
+		FROM Arbol a 
+		INNER JOIN Localidad l ON a.codigoPostal = l.CodigoPostal
+	    INNER JOIN Poda ON a.nroArbol = Poda.nroArbol
+	    INNER JOIN Podador p ON Poda.DNI = p.DNI
+		WHERE p.nombre = "Jose" AND p.apellido = "Garcia"
 		
 	```
 
@@ -863,7 +909,12 @@
 
 	```sql
 
-				
+		SELECT p.DNI, p.nombre, p.apellido, p.fnac, l.nombreL
+		FROM Podador p
+		INNER JOIN Localidad l ON p.codigoPostalVive = l.CodigoPostal
+		INNER JOIN Poda ON p.DNI = Poda.DNI
+		WHERE YEAR(Poda.fecha) = 2018
+		-- WHERE Poda.fecha BETWEEN '1/1/2018' AND '31/12/2018'
 		
 	```
 
@@ -871,7 +922,36 @@
 
 	```sql
 
-				
+		SELECT a.especie, a.anios, a.calle, a.nro, l.nombreL
+		FROM Arbol a
+		INNER JOIN Lodalidad l ON a.codigoPostal = l.CodigoPostal
+		WHERE NOT EXISTS (
+			SELECT Poda.nroArbol
+			FROM Poda
+			WHERE a.nroArbol = Poda.nroArbol
+		)
+		
+	```
+	
+	```sql
+
+		SELECT a.especie, a.anios, a.calle, a.nro, l.nombreL
+		FROM Arbol a
+		INNER JOIN Lodalidad l ON a.codigoPostal = l.CodigoPostal
+		WHERE a.nroArbol NOT IN (
+			SELECT Poda.nroArbol
+			FROM Poda
+		)
+		
+	```
+	
+	```sql
+
+		SELECT a.especie, a.años, a.calle, a.nro, l.nombreL
+		FROM Arbol a 
+		INNER JOIN Localidad l ON a.codigoPostal = l.CodigoPostal
+	    LEFT JOIN Poda ON a.nroArbol = Poda.nroArbol
+		WHERE Poda.nroArbol IS NULL
 		
 	```
 
@@ -887,7 +967,7 @@
 
 	```sql
 
-				
+		SELECT
 		
 	```
 
@@ -919,27 +999,29 @@
 
 	```sql
 
-				
+			SELECT
 		
 	```
 
 
 ### Ejercicio 6
 
-**Técnico** (codTec, nombre, especialidad) `técnicos`
+**Tecnico** (codTec, nombre, especialidad) `técnicos`
 
 **Repuesto** (codRep, nombre, stock, precio)  `repuestos`
 
 **RepuestoReparacion** (nroReparac, codRep, cantidad, precio) `repuestos utilizados en reparaciones.`
 
-**Reparación** (nroReparac, codTec, precio_total, fecha) `reparaciones realizadas.`
+**Reparacion** (nroReparac, codTec, precio_total, fecha) `reparaciones realizadas.`
 
 1. Listar todos los repuestos, informando el nombre, stock y precio. Ordenar el
 resultado por precio.
 
 	```sql
 
-				
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		ORDER BY repu.precio
 		
 	```
 
@@ -947,7 +1029,35 @@ resultado por precio.
 
 	```sql
 
-				
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		INNER JOIN RepuestoReparacion rp ON repu.codRep = rr.codRep
+		WHERE rr.nroReparac IN (
+			SELECT repa.nroReparac
+			FROM Reparacion repa
+			WHERE YEAR(repa.fecha) = 2019 AND repa.codTec NOT IN (
+				SELECT t.codTec
+				FROM Tecnico t
+				WHERE t.nombre = 'José Gonzalez'	
+			)
+		)
+		
+	```
+	
+	```sql
+
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		INNER JOIN RepuestoReparacion rr ON repu.codRep = rr.codRep
+		INNER JOIN Reparación repa ON rr.nroReparac = repa.nroReparac
+		WHERE YEAR(repa.fecha) = 2019
+		EXCEPT
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		INNER JOIN RepuestoReparacion rr ON repu.codRep = rr.codRep
+		INNER JOIN Reparación repa ON rr.nroReparac = repa.nroReparac
+		INNER JOIN Tecnico t ON repa.codTec = t.codTec
+		WHERE t.nombre = 'José Gonzalez'
 		
 	```
 
@@ -956,15 +1066,64 @@ reparación. Ordenar por nombre ascendentemente.
 
 	```sql
 
-				
+		SELECT t.nombre, t.especialidad
+		FROM Tecnico t
+		WHERE t.codTec NOT IN (
+			SELECT repa.codTec
+			FROM Reparacion
+		)
+		ORDER BY t.nombre
+		
+	```
+	
+	```sql
+
+		SELECT t.nombre, t.especialidad
+		FROM Tecnico t
+		WHERE NOT EXISTS (
+			SELECT repa.codTec
+			FROM Reparacion repa
+			WHERE t.codTec = repa.codTec
+		)
+		OREDER BY t.nombre
 		
 	```
 
 4. Listar el nombre, especialidad de técnicos solo participaron en reparaciones durante 2018.
 
 	```sql
+	
+	-- Versión 1
 
-				
+		SELECT t.nombre, t.especialidad
+		FROM Tecnicos t
+		WHERE t.codTec IN (
+			SELECT repa.codTec
+			FROM Reparacion repa
+			WHERE YEAR(repa.fecha) = '2018'
+		) AND t.codTec NOT IN (
+			SELECT repa.codTec
+			FROM Reparacion repa
+			WHERE YEAR(repa.fecha) != '2018'
+		)
+		
+	```
+	
+	```sql
+	
+	-- Versión 2
+
+		SELECT t.nombre, t.especialidad
+		FROM Tecnicos t
+		WHERE t.codTec IN (
+			SELECT repa.codTec
+			FROM Reparacion repa
+			WHERE YEAR(repa.fecha) = '2018'
+		) AND t.codTec NOT IN (
+			SELECT repa.codTec
+			FROM Reparacion repa
+			WHERE YEAR(repa.fecha) != '2018'
+		)
 		
 	```
 
@@ -972,7 +1131,11 @@ reparación. Ordenar por nombre ascendentemente.
 
 	```sql
 
-				
+		SELECT repu.nombre, repu.stock, COUNT(repa.codTec) AS cantTecnicos
+		FROM Repuesto repu
+		LEFT JOIN RepuestoReparacion rr ON repu.codRep = rr.codRep
+		LEFT JOIN Reparacion repa ON rr.nroReparac
+		GROUP BY repu.codRep, repu.nombre, repu.stock
 		
 	```
 
@@ -981,7 +1144,23 @@ realizadas y el técnico con menor cantidad de reparaciones.
 
 	```sql
 
-				
+		SELECT t.nombre, t.especialidad
+		FROM Tecnico t INNER JOIN Reparacion repa (t.codTec = repa.codTec)
+		GROUP BY t.codTec, t.nombre, t.especialidad 
+		HAVING COUNT(t.codTec) >= ALL(
+			SELECT COUNT(repa.codTec)
+			FROM Reparacion repa
+			GROUP BY repa.codTec
+		)
+		
+		SELECT t.nombre, t.especialidad
+		FROM Tecnico t INNER JOIN Reparacion repa (t.codTec = repa.codTec)
+		GROUP BY t.codTec, t.nombre, t.especialidad 
+		HAVING COUNT(t.codTec) <= ALL(
+			SELECT COUNT(repa.codTec)
+			FROM Reparacion repa
+			GROUP BY repa.codTec
+		)
 		
 	```
 
@@ -990,7 +1169,14 @@ dicho repuesto no haya estado en reparaciones con precio_total superior a 10000.
 
 	```sql
 
-				
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		WHERE repu.stock > 0 AND repu.codRep NOT IN (
+			SELECT rr.codRep		
+			FROM RepuestoReparacion rr
+			INNER JOIN Reparacion repa ON rr.nroReparac = repa.nroReparac
+			WHERE repa.precio_total > 10000
+		)
 		
 	```
 
@@ -999,7 +1185,10 @@ $5000.
 
 	```sql
 
-				
+		SELECT repa.precio, repa.fecha, repa.precio_total
+		FROM Reparacion repa
+		INNER JOIN RepuestoReparacion rr ON repa.nroReparac = rr.nroReparac
+		WHERE rr.precio > 1000 AND rr.precio < 5000
 		
 	```
 
@@ -1007,34 +1196,58 @@ $5000.
 
 	```sql
 
-				
-		
+		SELECT repu.nombre, repu.stock, repu.precio
+		FROM Repuesto repu
+		WHERE NOT EXIST (
+			SELECT rr.codRep
+			FROM RepuestoReparacion rr
+			WHERE repu.codRep = rr.codRep AND NOT EXISTS (
+				SELECT repa.nroReparac
+				FROM Reparacion
+				WHERE rr.nroReparac = repa.nroReparac AND rr.codRep = repu.codRep
+			)		
+		);
+			
 	```
 
 10. Listar fecha, técnico y precio total de aquellas reparaciones que necesitaron al menos 10 repuestos distintos.
 
 	```sql
 
-				
+		SELECT repa.fecha, t.nombre, repa.precio_total
+		FROM Reparacion repa
+		INNER JOIN RepuestoReparacion rr ON repa.nroReparac = rr.nroReparac
+		INNER JOIN Tecnico t ON t.codTec = repa.codTec
+		GROUP BY repa.nroReparac, repa.fecha, t.nombre, repa.precio_total
+		HAVING COUNT(DISTINCT rr.codRep) > 10;
+
 		
 	```
 
 
 ### Ejercicio 7
 
-**Banda** (codigoB, nombreBanda, genero_musical, año_creacion)
+**Banda** (codigoB, nombreBanda, genero_musical, anio_creacion)
 
-**Integrante** (DNI, nombre, apellido,dirección,email, fecha_nacimiento,codigoB(fk))
+**Integrante** (DNI, nombre, apellido, direccion, email, fecha_nacimiento, codigoB(fk))
 
-**Escenario** (nroEscenario, nombre _ escenario, ubicación,cubierto, m2, descripción)
+**Escenario** (nroEscenario, nombre_escenario, ubicacion, cubierto, m2, descripcion)
 
-**Recital** (fecha,hora,nroEscenario, codigoB (fk))
+**Recital** (fecha, hora, nroEscenario, codigoB(fk))
 
 1. Listar DNI, nombre, apellido,dirección y email de integrantes nacidos entre 1980 y 1990 y hayan realizado algún recital durante 2018.
 
 	```sql
 
-				
+		SELECT i.DNI, i.nombre, i.apellido, i.direccion, i.email
+		FROM Integrante i
+		WHERE YEAR(i.fecha_nacimiento) BETWEEN '1980' AND '1990' 
+		AND i.codigoB IN (
+			SELECT b.codigoB
+			FROM Banda b
+			INNER JOIN Recital r ON b.codigoB = r.codigoB
+			WHERE YEAR(r.fecha) = 2018
+		);
 		
 	```
 
@@ -1042,23 +1255,86 @@ $5000.
 recitales durante 2018, pero no hayan tocado durante 2017 .
 
 	```sql
+	
+	--Versión 1
 
-				
+		SELECT b.nombre, b.genero, b.año_creacion
+		FROM Banda b
+		INNER JOIN Recital r ON b.codigoB = r.codigoB
+		WHERE YEAR(r.fecha) = 2018 
+		AND b.codigoB NOT IN (
+			SELECT r.codigoB
+			FROM Recital r
+			WHERE YEAR(r.fecha) = 2017
+		);
 		
+	```
+	
+	```sql
+	
+	--Versión 2
+	
+		SELECT b.nombreBanda, b.genero_musical, b.año_creacion
+		FROM Banda b 
+		INNER JOIN Recital r ON b.codigoB = r.codigoB
+		WHERE r.fecha BETWEEN "01/01/2018" AND "31/12/2018"
+		EXCEPT
+		(
+			SELECT b.nombreBanda, b.genero_musical, b.año_creacion
+			FROM Banda b 
+			INNER JOIN Recital r ON b.codigoB = r.codigoB
+			WHERE r.fecha BETWEEN "01/01/2017" AND "31/12/2017"
+		);
+
 	```
 
 3. Listar el cronograma de recitales del dia 04/12/2018. Se deberá listar: nombre de la banda que ejecutará el recital, fecha, hora, y el nombre y ubicación del escenario correspondiente.
 
 	```sql
 
-				
+		SELECT b.nombre, r.fecha, r.hora, e.nombre, e.ubicacion
+		FROM Recital r
+		INNER JOIN Escenario e ON r.nroEscenario = e.nroEscenario
+		INNER JOIN Banda b ON r.codigoB = b.codigoB
+		WHERE r.fecha = '4/12/2018'
 		
 	```
 
 4. Listar DNI, nombre, apellido,email de integrantes que hayan tocado en el escenario con nombre ‘Gustavo Cerati’ y en el escenario con nombre ‘Carlos Gardel’.
 
 	```sql
+	
+	--Versión 1
 
+		SELECT i.DNI, i.nombre, i.apellido, i.email
+		FROM Integrante i
+		INNER JOIN Recital r ON i.codigoB = r.codigoB
+		INNER JOIN Escenario e ON r.nroEscenario = e.nroEscenario
+		WHERE e.nombre_escenario = 'Gustavo Cerati' 
+		AND i.codigoB IN (
+			SELECT r.codigoB
+			FROM Recital r
+			INNER JOIN Escenario e ON r.nroEscenario = e.nroEscenario
+			WHERE e.nombre_escenario = 'Carlos Gardel' 
+		)
+		
+	```
+	
+	```sql
+
+		SELECT i.DNI, i.nombre, i.apellido, i.email
+		FROM Recital r 
+		INNER JOIN Integrante i ON (r.codigoB = i.codigoB)
+		INNER JOIN Escenario e ON (r.nroEscenario = e.nroEscenario)
+		WHERE e.nombre_escenario = "Gustavo Cerati"
+		INTERSECT
+		(
+			SELECT i.DNI, i.nombre, i.apellido, i.email
+			FROM Recital r 
+			INNER JOIN Integrante i ON (r.codigoB = i.codigoB)
+			INNER JOIN Escenario e ON (r.nroEscenario = e.nroEscenario)
+			WHERE e.nombre_escenario = "Carlos Gardel"
+		)
 				
 		
 	```
@@ -1068,7 +1344,11 @@ integrantes.
 
 	```sql
 
-				
+		SELECT b.nombreBanda, b.genero_musical, b.anio_creacion
+		FROM Banda b
+		INNER JOIN Integrante i ON b.codigoB = i.codigoB
+		GROUP BY b.codigoB, b.nombreBanda, b.genero_musical, b.anio_creacion
+		HAVING COUNT(i.DNI) > 8;
 		
 	```
 
@@ -1076,16 +1356,49 @@ integrantes.
 
 	```sql
 
-				
+		SELECT e.nombre_escenario, e.ubicacion, e.descripcion
+		FROM Escenario e
+		INNER JOIN Recital r ON e.nroEscenario = r.nroEscenario
+		INNER JOIN Banda b ON r.codigoB = b.codigoB
+		WHERE b.genero_musical = 'Rock And Roll' AND e.nroEscenario NOT IN (
+			SELECT r.nroEscenario
+			FROM Recital r
+			INNER JOIN Banda b ON r.codigoB = b.codigoB
+			WHERE b.genero_musical <> 'Rock And Roll'
+		)
+		ORDER BY e.nombre_escenario
+		
+	```
+	
+	```sql
+
+		SELECT e.nombre_escenario, e.ubicacion, e.descripcion
+		FROM Escenario e 
+		INNER JOIN Recital r ON e.nroEscenario = r.nroEscenario
+		INNER JOIN Banda b ON r.codigoB = b.codigoB
+		WHERE b.genero_musical = 'Rock And Roll'
+		EXCEPT 
+		(
+			SELECT e.nombre_escenario, e.ubicacion, e.descripcion
+			FROM Escenario e 
+			INNER JOIN Recital r ON e.nroEscenario = r.nroEscenario
+			INNER JOIN Banda b ON r.codigoB = b.codigoB
+			WHERE b.genero_musical <> 'Rock And Roll'
+		)
+		ORDER BY e.nombre_escenario
 		
 	```
 
 7. Listar nombre, género musical y año de creación de bandas que hayan realizado recitales en escenarios cubiertos durante 2018. `cubierto es true, false según corresponda.`
 
 	```sql
+	
+		SELECT b.nombreBanda, b.genero_musical, b.anio_creacion
+		FROM Banda b
+		INNER JOIN Recital r ON b.codigoB = r.codigoB
+		INNER JOIN Escenario e ON r.nroEscenario = e.nroEscenario
+		WHERE YEAR(r.fecha) = 2018 AND e.cubierto = true;
 
-				
-		
 	```
 
 8. Reportar para cada escenario, nombre del escenario y cantidad de recitales durante 2018.
@@ -1365,7 +1678,7 @@ integrantes.
 		
 		SELECT p.nombre, p.precio_parte
 		FROM Parte
-		WHERE EXIST (
+		WHERE EXISTS (
 			SELECT * 
 			FROM Service_Parte
 			WHERE Service_Parte.cod_parte = Parte.cod_parte AND (YEAR(s.fecha) = YEAR(CURRENT_DATE))
@@ -1475,13 +1788,13 @@ integrantes.
 		SELECT m.nombre, m.edad, m.raza
 		FROM Mascota m 
 		WHERE m.codMascota IN (
-			Select s.codMascota
+			SELECT s.codMascota
 			FROM Supervision s
 			INNER JOIN Veterinario v ON  s.matricula = v.matricula
 			WHERE v.matricula = 'MP 1000'
 		) 
 		AND m.codMascota (
-			Select s.codMascota
+			SELECT s.codMascota
 			FROM Supervision s
 			INNER JOIN Veterinario v ON  s.matricula = v.matricula
 			WHERE v.matriculo = 'MP 1000' 
