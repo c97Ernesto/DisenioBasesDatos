@@ -1405,7 +1405,11 @@ integrantes.
 
 	```sql
 
-				
+		SELECT e.nombre, COUNT(*) AS cantRecitales
+		FROM Escenario e
+		INNER JOIN Recital r ON e.nroEscenario = r.nroEscenario
+		WHERE YEAR(r.fecha = 2018)
+		GROUP BY e.nroEscenario, e.nombre
 		
 	```
 
@@ -1413,36 +1417,72 @@ integrantes.
 
 	```sql
 
-				
+		UPDATE Banda b
+		SET nombreBanda = 'Memphis la Blusera'
+		WHERE b.nombreBanda = ‘Mempis la Blusera’;
 		
 	```
 
 
 ### Ejercicio 8
 
-**Equipo** (codigoE, nombreE, descripcionE)
+**Equipo** (<u>codigoE</u>, nombreE, descripcionE)
 
-**Integrante** (DNI, nombre, apellido,ciudad,email, telefono,codigoE(fk))
+**Integrante** (<u>DNI</u>, nombre, apellido,ciudad,email, telefono,codigoE(fk))
 
-**Laguna** (nroLaguna, nombreL, ubicación,extension, descripción)
+**Laguna** (<u>nroLaguna</u>, nombreL, ubicación,extension, descripción)
 
-**TorneoPesca** (codTorneo, fecha,hora,nroLaguna(fk), descripcion)
+**TorneoPesca** (<u>codTorneo</u>, fecha,hora,nroLaguna(fk), descripcion)
 
-**Inscripcion** (codTorneo,codigoE,asistio, gano) `asistio y gano son true o false según corresponda`
+**Inscripcion** (<u>codTorneo,codigoE</u>,asistio, gano) `asistio y gano son true o false según corresponda`
 
 1. Listar DNI, nombre, apellido y email de integrantes que sean de la ciudad ‘La Plata’ y estén inscriptos en torneos a disputarse durante 2019.
 
 	```sql
 
-				
+	-- Versión 1:
+
+		SELECT i.DNI, i.nombre, i. apellido, i.email
+		FROM Integrante i
+		WHERE i.ciudad = 'La Plata' AND i.codigoE IN (
+			SELECT Inscripcion.codigoE
+			FROM Inscripcion
+			INNER JOIN TorneoPesca t ON Inscripcion.codTec = t.codTorneo
+			WHERE YEAR(t.fecha) = 2019
+		);
 		
 	```
+
+	```sql
+	
+	--Versión 2:
+	
+		SELECT int.DNI, int.nombre, int.apellido int.ciudad, int.email
+		FROM Intengrante int 
+		INNER JOIN Inscripcion ins ON int.codigoE = ins.codigoE
+		INNER JOIN TorneoPesca t ON ins.codTorneo = t.codTorneo
+		WHERE i.ciudad = "La Plata" 
+		AND tp.fecha BETWEEN "01/01/2019" AND "31/12/2019"
+		
+	```
+	
+	
 
 2. Reportar nombre y descripción de equipos que solo se hayan inscripto en torneos de 2018.
 
 	```sql
 
-				
+		SELECT e.nombreE, e.descripcionE
+		FROM Equipo e
+		INNER JOIN Inscripcion ins ON e.codigoE = ins.codigoE
+		INNER JOIN TorneoPesca t ON ins.codTorneo = t.codTorneo
+		WHERE YEAR(t.fecha) = 2018 
+		AND e.codigoE NOT IN (
+			SELECT ins.codigoE
+			FROM Inscripcion ins
+			INNER JOIN TorneoPesca t ON ins.codTec = t.codTorneo
+			WHERE YEAR(t.fecha) <> 2018
+		)
 		
 	```
 
@@ -1450,7 +1490,38 @@ integrantes.
 
 	```sql
 
-				
+		SELECT i.DNI, i.nombre, i.apellido, i.email, i.ciudad
+		FROM Integrante i
+		INNER JOIN Inscripcion ins ON i.codigoE = ins.codigoE
+		INNER JOIN TorneoPesca t ON ins.codTorneo = t.codTorneo
+		INNER JOIN Laguna l ON t.nroLaguna = l.nroLaguna
+		WHERE ins.asistio = true AND l.nombre = 'La Salada, Coronel Granada'
+		AND i.codigoE NOT IN (
+			SELECT ins.codigoE
+			FROM Inscripcion ins
+			INNER JOIN TorneoPesca t ON ins.codTorneo = t.codTorneo
+			WHERE YEAR(t.fecha) = 2019
+		);
+
+	```
+
+	```sql
+
+		SELECT i.DNI, i.nombre, i.apellido, i.ciudad, i.email
+		FROM Integrante i 
+		INNER JOIN Inscripcion ins ON i.codigoE = ins.codigoE
+		INNER JOIN TorneoPesca t ON ins.codTorneo = t.codTorneo
+		INNER JOIN Laguna l ON t.nroLaguna = l.nroLaguna
+		WHERE l.nombreL = 'La Salada, Coronel Granada' AND i.asistio = true
+		EXCEPT
+		(
+			SELECT i.DNI, i.nombre, i.apellido, i.ciudad, i.email
+			FROM Integrante i 
+			INNER JOIN Inscripcion ins ON (i.codigoE = ins.codigoE)
+			INNER JOIN TorneoPesca tp ON (ins.codTorneo = tp.codTorneo)
+			WHERE tp.fecha BETWEEN '01/01/2019' AND '31/12/2019'
+		)
+
 		
 	```
 
@@ -1458,7 +1529,11 @@ integrantes.
 
 	```sql
 
-				
+		SELECT e.nombre, e.descripcion
+		FROM Equipo e
+		INNER JOIN Integrante i ON e.codigoE = i.codigoE
+		GROUP BY e.nombre, e.descripcion
+		HAVING 
 		
 	```
 
