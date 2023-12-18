@@ -73,7 +73,81 @@
 
 10. Agregar un producto con id de producto 1000, descripción “mi producto”, precio $10000, nombreP “producto Z” y stock 1000. Se supone que el idProducto 1000 no existe.
 	- Solución:
-		- Producto **⇐** Producto **⋃** {(1000, "mi producto", 10000, "producto z", 1000)}
+		- Producto **⇐** Producto < {(1000, "mi producto", 10000, "producto z", 1000)}
+		
+### Ejercicio 2:
+
+**Banda** (codigoB, nombreBanda, genero_musical, anio_creacion)
+
+**Integrante** (DNI, nombre, apellido, direccion, email, fecha_nacimiento, codigoB(fk))
+
+**Escenario** (nroEscenario, nombre_escenario, ubicacion, cubierto, m2, descripcion)
+
+**Recital** (fecha, hora, nroEscenario, codigoB(fk))
+
+1. Listar datos personales de integrantes con apellido ‘Garcia’ o fecha de nacimiento anterior a 2005 que toquen en bandas de Rock And Roll.
+
+	- Solución:
+		- **π**<sub>nombre, apellido, direccion, fecha_nacimiento</sub>(**σ**<sub>Banda.codigoB = Integrante.codigoB</sub>(**σ**<sub>(apellido = "Garcia") OR (fecha_nacimiento < 2005)</sub> (Integrante)) **𝑥** (**σ**<sub>genero_musical = 'Rock And Roll'</sub> (Banda)))		
+	
+
+2. Listar nombre de escenario, ubicación y descripción de escenarios que no tuvieron recitales durante 2019.
+
+	- Solución:
+		- escenarios **⇐** **π**<sub>nroEscenario, nombre_escenario, ubicacion, descripcion</sub>(Escenario)
+		- **π**<sub>nombre_escenario, ubicacion, descripcion</sub>(escenarios **−** **π**<sub>nroEscenario, nombre_escenario, ubicacion, descripcion</sub>(Escenario **|𝑥|** (**σ**<sub>fecha = 2019</sub>(Recital)))
+
+		
+
+3. Listar nombre de escenario, ubicación y descripción de escenarios que tuvieron recitales con género musical Rock And Roll o tuvieron recitales durante 2020.
+
+	- Solución:
+		- recitalRock **⇐** **π**<sub>nroEscenario, nombre_escenario, ubicacion, descripcion</sub>(Escenario **|𝑥|** Recital **|𝑥|** (**σ**<sub>genero_musical = 'Rock And Roll'</sub>(Banda))
+		- recital2020 **⇐** **π**<sub>nroEscenario, nombre_escenario, ubicacion, descripcion</sub>(Escenario **|𝑥|** (**σ**<sub>(fecha >= '1/1/2020') ^ (fecha <= '31/12/2020')</sub>(Recital))
+		- **π**<sub>nroEscenario, nombre_escenario, ubicacion, descripcion</sub> (recitalRock **⋃** recital2020)
+		
+
+4. Listar nombre, género musical y año de creación de bandas que hayan realizado recitales en escenarios cubiertos durante 2019. `cubierto es true, false según corresponda.`
+
+	- Solución:
+		- **π**<sub>nombre, genero_musical, anio_creacion</sub> (Banda **|𝑥|** (**σ**<sub>(fecha >= '1/1/2019') ^ (fecha <= '31/12/2019')</sub>  (Recital)) **|𝑥|** (**σ**<sub>cubierto = true</sub> (Escenario))))
+
+5. Listar DNI, nombre, apellido,dirección y email de integrantes nacidos entre 2000 y 2005 y que toquen en bandas con género pop que hayan tenido recitales durante 2020.
+
+	- Solución:
+		- nacidosEntre **⇐** **π**<sub>DNI, nombre, apellido, direccion, email, codigoB</sub> (**σ**<sub>(fecha_nacimiento >= '1/1/2000') ^ (fecha <= '31/12/2005')</sub> (Integrante))
+		- bandasPop **⇐** **π**<sub>codigoB</sub>((**σ**<sub>(fecha >= '1/1/2020') ^ (fecha <= '31/12/2020')</sub> (Recital)) **|𝑥|** (**σ**<sub>genero_musical = 'Pop'</sub> (Banda)))
+		- nacidosEntreConBandasPop **⇐** **π**<sub>DNI, nombre, apellido, direccion, email</sub> (nacidosEntre **|𝑥|** bandasPop)
+		
+
+6. Listar DNI, nombre, apellido,email de integrantes que hayan tocado en el escenario con nombre ‘Gustavo Cerati’ y no hayan tocado en el escenario  con nombre ‘Carlos Gardel’.
+	
+	- Solución 1:
+	
+		- Cerati **⇐** (Integrante **|𝑥|** Recital **|𝑥|** (**σ**<sub>nombre_escenario = 'Gustavo Cerati'</sub>(Escenario))
+		- Gardel **⇐** (Integrante **|𝑥|** Recital **|𝑥|** (**σ**<sub>nombre_escenario = 'Carlos Gardel'</sub>(Escenario))
+		- **π**<sub>DNI, nombre, apellido, email</sub>(Cerati **−** Gardel)
+	
+
+7. Modificar el año de creación de la banda de nombre ‘Ratones Paranoicos’ a: 1983.
+
+	- Solución:
+		- **σ**<sub>anio_creacion **⇐** '1983'</sub>(**σ**<sub>nombreBanda = 'Ratones Paranoicos'</sub> (Banda))
+
+8. Reportar  nombre, género musical y año de creación de bandas que hayan realizado recitales durante 2019, y además hayan tocado durante 2020.
+
+	- Solución:
+		- recital2019 **⇐** (Banda **|𝑥|** (**σ**<sub>(fecha >= '1/1/2019') ^ (fecha <= '31/12/2019')</sub> (Recital)))
+		 
+		- tocaron2020 **⇐** (Banda **|𝑥|** (**σ**<sub>(fecha >= '1/1/2020') ^ (fecha <= '31/12/2020')</sub> (Recital)))
+		
+		- **π**<sub>nombre, genero_musical, anio_creacion</sub> (rectial2019 **⋂** tocaron2020)
+
+9. Listar el cronograma de recitales del dia 04/12/2019. Se deberá listar: nombre de la banda que ejecutará el recital, fecha, hora, y el nombre y ubicación del escenario correspondiente.
+
+	- Solución:
+		- **π**<sub>Banda.nombre, Recital.fecha, Recital.hora, Escenario.nombre_escenario, Escenario.ubicacion</sub> (Banda **|𝑥|** (**σ**<sub>(fecha <= '4/12/2019')</sub> (Recital **|𝑥|** Escenario))
+
 
 ### Ejercicio 3:
 
@@ -106,8 +180,8 @@
 	
 
 4. Listar información de agencias que realizaron viajes durante 2019 y no realizaron viajes durante 2020.
-	- viajesEn2019 **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** (**σ**<sub>((FECHA > "1/1/2019") ^ (FECHA < "31/12/2019")</sub> Viaje)
-	- viajesEn2020 **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** (**σ**<sub>((FECHA > "1/1/2020") ^ (FECHA < "31/12/2020")</sub> Viaje)
+	- viajesEn2019 **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** (**σ**<sub>((FECHA >= "1/1/2019") ^ (FECHA <= "31/12/2019")</sub> Viaje)
+	- viajesEn2020 **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** (**σ**<sub>((FECHA >= "1/1/2020") ^ (FECHA <= "31/12/2020")</sub> Viaje)
 	- **π**<sub>direccion, telef, e-mail</sub> (viajesEn2019 **−** viajesEn2020)
 
 5. Agregar una agencia de viajes con los datos que desee.
@@ -131,7 +205,68 @@
 	
 9. Reportar información de agencias que realizaron viajes durante 2019 o que tengan dirección igual a  ‘General Pinto’.
 
+	- viajesEn2019 **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** (**σ**<sub>((FECHA >= "1/1/2019") ^ (FECHA <= "31/12/2019")</sub> Viaje)
+	- dirGeneralPinto **⇐** **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub> (Agencia **|𝑥|** Viaje **|𝑥|** (**σ**<sub>nombreCiudad = 'General Pinto'</sub>(Ciudad)))
+	- **π**<sub>RAZON_SOCIAL, direccion, telef, e-mail</sub>(viajesEn2019 **⋃** dirGeneralPinto)
+	
 10. Actualizar el teléfono del cliente con DNI: 2789655 a: 221-4400345.
+
+		- **σ**<sub>telefono **⇐** '221-4400345'</sub>(**σ**<sub>telefono = '221-4400345'</sub> (Cliente))
+	
+
+### Ejercicio 4:
+
+**Equipo** (<u>codigoE</u>, nombreE, descripcionE)
+
+**Integrante** (<u>DNI</u>, nombre, apellido, ciudad, email, telefono, codigoE)
+
+**Laguna** (<u>nroLaguna</u>, nombreL, ubicacion, extension, descripcion)
+
+**TorneoPesca** (<u>codTorneo</u>, fecha, hora, nroLaguna, descripcion)
+
+**Inscripcion** (<u>codTorneo, codigoE</u>,asistio, gano) `asistio y gano son true o false según corresponda`
+
+1. Listar DNI, nombre, apellido y email de integrantes que sean de la ciudad ‘La Plata’ y estén inscriptos en torneos que se disputaron durante 2019.
+
+2. Reportar  nombre y descripción de equipos que solo se hayan inscripto en torneos de 2019.
+
+3. Listar nombre, ubicación, extensión y descripción de lagunas que hayan tenido torneos durante 2019 y no hayan tenido torneos durante 2020.
+
+4. Listar para la laguna  con nombre ‘laguna x’, nombre y descripción de equipos ganadores de torneos que se disputaron durante 2019 en la mencionada laguna.
+
+	- Solución:
+		- ganadores **⇐** (**σ**<sub>gano = true</sub> (Inscripcion))
+		- torneos2019 **⇐** (**σ**<sub>((fecha > "1/1/2019") ^ (FECHA < "31/12/2019")</sub> TorneoPesca))
+		- lagunaX **⇐** (**σ**<sub>nombreL = 'laguna x'</sub> (Laguna))
+		- **π**<sub>nombreE, descripcionE</sub> (Equipo **|𝑥|** ganadores **|𝑥|** torneos2019 **|𝑥|** lagunaX)
+		
+
+5. Reportar  nombre, y descripción de equipos que tengan inscripciones en todas las lagunas.
+
+	- Solución: 
+		- lagunas **⇐** **π**<sub>nroLaguna</sub> (Laguna)
+		- **π**<sub>nombreE, descripcionE</sub> (Equipo **|𝑥|** Inscripcion **|𝑥|** Laguna) **%** lagunas)
+
+6. Eliminar el equipo con código: 10000.
+
+	- Solución
+		- Integrante **⇐** Integrante **−** (**σ**<sub>codigoE = 10000</sub>(Integrante))
+		- Inscripcion **⇐** Inscripcion **−** (**σ**<sub>codigoE = 10000</sub>(Inscripcion))
+		- Equipo **⇐** Equipo **−** (**σ**<sub>codigoE = 10000</sub>(Equipo))
+		
+
+7. Listar nombreL, ubicación,extensión y descripción de lagunas que no tuvieron torneos. 
+	
+	- Solución:
+		- lagunasConTorneo **⇐** **π**<sub>nroLaguna, nombreL, ubicacion, extension, descripcion</sub>(Laguna **|𝑥|** TorneoPesca)
+		
+		- **π**<sub>nroLaguna, nombreL, ubicacion, extension, descripcion</sub>(Laguna **−** lagunasConTorneo)
+			
+
+8. Reportar  nombre, y descripción de equipos que tengan inscripciones a torneos a disputarse durante 2019, pero no tienen inscripciones a torneos de 2020.
+
+9. Listar DNI, nombre, apellido, ciudad y email de integrantes que asistieron o ganaron algún torneo que se disputó en la laguna con nombre: ‘Laguna Brava’.
+
 
 ### Ejercicio 5:
 **Club** (codigoClub, nombre, anioFundacion, codigoCiudad(FK))
@@ -187,6 +322,67 @@
 	- ClubJugador **⇐** ClubJugador **−** (**σ**<sub>dni = 24242424</sub> (ClubJugador))
 	
 	- Jugador **⇐** Jugador **−** (**σ**<sub>dni = 24242424</sub> (Jugador))
+
+### Ejercicio 6:	
+**Proyecto** (codProyecto, nombrP,descripcion, fechaInicioP, fechaFinP, fechaFinEstimada, DNIResponsable(fk), equipoBackend(fk), equipoFrontend(fk)) `DNIResponsable corresponde a un empleado, equipoBackend y equipoFrontend corresponden a un equipo.`
+
+**Equipo** (codEquipo, nombreE, descripcionTecnologias,DNILider(fk)) `DNILider corresponde a un empleado`
+
+**Empleado** (DNI,nombre, apellido, telefono, direccion, fechaIngreso)
+
+**Empleado_Equipo** (codEquipo,DNI, fechaInicio, fechaFin,descripcionRol)
+
+1. Listar nombre, descripción, fecha de inicio y fecha de fin de proyectos ya finalizados que no fueron terminados antes de la fecha de fin estimada. 
+
+	- Solución:
+		- proyFinalizados **⇐** **π**<sub>nombre, descripcion, fechaInicio, fechaFinP</sub>(**σ**<sub>fechaFinP < fechaActual</sub>(Proyecto))
+		- proyFinalizadosFueraDeTermino **⇐** **π**<sub>nombre, descripcion, fechaInicio, fechaFinP</sub>(**σ**<sub>fechaFinP > fechaFinEstimada</sub>(Proyecto))
+		- **π**<sub>nombre, descripcion, fechaInicio, fechaFinP</sub> (proyFinalizados **⋂** proyFinalizadosFueraDeTermino)
+
+2. Listar DNI, nombre, apellido, teléfono, dirección y fecha de ingreso de empleados que no hayan sido responsables de proyectos.
+
+	- Solución:
+		- responsables **⇐** **π**<sub>DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub>(Proyecto **|𝑥|** Empleado)
+		- **π**<sub>DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub>(Empleado **−** noReponsables)
+
+3. Listar DNI, nombre, apellido, teléfono y dirección de todos los empleados que trabajan en el proyecto con nombre ‘Proyecto X’. No es necesario informar responsable y líderes.
+
+4. Listar nombre de equipo y datos personales de líderes de equipos que no tengan empleados asignados y trabajen con tecnología ‘Java’.
+
+	- Solución:
+		- lideresConEquipo **⇐** **π**<sub>codEquipo, nombreE, descripcionTecnologias, DNILider</sub> (Equipo **|𝑥|** (Empleado_Equipo))
+		- lideresSinEquipo **⇐** **π**<sub>codEquipo, nombreE, descripcionTecnologias, DNILider</sub> (Equipo **−** (lideresConEquipo))
+		- lideresJavaSinEquipo **⇐** **π**<sub>nombreE, DNILider</sub> (**σ**<sub>descripcionTecnologias = 'Java'</sub>(lideresSinEquipo))
+		**π**<sub>nombreE, DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub>(Empleado **|𝑥|** lideresJavaSinEquipo)
+
+
+5. Modificar nombre, apellido y dirección del empleado con DNI: 40568965 con los datos que desee.
+
+	
+
+6. Listar DNI, nombre, apellido, teléfono y dirección de empleados que son responsables de proyectos pero no han sido líderes de equipo.
+
+	- Solución
+		- lideres **⇐** **π**<sub>DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub> (**σ**<sub>DNI = DNILider</sub> (Empleado **𝑥** Equipo))
+		- responsables **⇐** **π**<sub>DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub> (**σ**<sub>DNI = DNIResponsable</sub> (Empleado **𝑥** Proyecto))
+		- **π**<sub>DNI, nombre, apellido, telefono, direccion, fechaIngreso</sub> (responsables **−** lideres)
+
+7. Listar nombre de equipo y descripción de tecnologías de equipos que hayan sido asignados como equipos frontend y backend.
+
+	- Solución
+		- equiposBackend **⇐** **π**<sub>nombreE, descripcionE</sub> (**σ**<sub>codEquipo = equipoBackend</sub> (Equipo **𝑥** Proyecto))
+		
+		- equiposFrontend **⇐** **π**<sub>nombreE, descripcionE</sub> (**σ**<sub>codEquipo = equipoFrontend</sub> (Equipo **𝑥** Proyecto))
+		
+		- **π**<sub>nombreE, descripcionE</sub> (equipoBackend **⋂** equipoFrontend)
+
+8. Listar nombre, descripción, fecha de inicio, nombre y apellido de responsables de proyectos a finalizar durante 2019.
+		
+	- Solución
+		- proy2019 **⇐** **π**<sub>nombreP, descripcion, fechaInicioP, DNIResponsable</sub>(**σ**<sub>fechFinP >= 1/1/2019 ^ fechFinP <= 31/12/2019</sub> (Proyecto))
+		- **π**<sub>nombreP, descripcion, fechaInicioP,</sub> (**σ**<sub>DNI = DNIResponsable</sub (Empleado **𝑥** proy2019))
+
+9. Listar nombre de equipo, descripción de tecnología y la información personal del líder, de equipos que no estén asignados a ningún proyecto aun.
 
 ### Ejercicio 7
 
@@ -245,8 +441,18 @@
 
 	- **π**<sub>patente, modelo, marca, peso, km</sub> (Vehiculo **|𝑥|**  (**π**<sub>patente</sub> (**σ**<sub>(fecha > "1/1/2019" ^ fecha < 31/12/2019)</sub> (Service)))
 	
+### Ejercicio 8
+
+**Box** = (nroBox,m2, ubicación, capacidad, ocupacion) `ocupación es un numérico indicando cantidad de mascotas en el box actualmente, capacidad es una descripción.`
+
+**Mascota** = (codMascota,nombre, edad, raza, peso, telefonoContacto)
+
+**Veterinario** = (matricula, CUIT, nombYAp, direccion, telefono)
+
+**Supervision** = (codMascota,nroBox, fechaEntra, fechaSale?, matricula(fk), descripcionEstadia) //fechaSale  tiene valor null si la mascota está actualmente en el box.`
+	
 ### Ejercicio 9
-#### Modelo Físico:
+
 **Barberia** = (codBarberia, razon_social, direccion, telefono)
 
 **Cliente** = (nroCliente,DNI, nombYAp, direccionC, fechaNacimiento, celular)
@@ -262,7 +468,7 @@
 3. Eliminar el cliente con DNI: 22222222.
 
 ### Ejercicio 10
-#### Modelo Físico:
+
 **Club** (IdClub,nombreClub,ciudad)
 
 **Complejo** (IdComplejo,nombreComplejo, IdClub(fk))
