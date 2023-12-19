@@ -324,13 +324,13 @@
 	- Jugador **⇐** Jugador **−** (**σ**<sub>dni = 24242424</sub> (Jugador))
 
 ### Ejercicio 6:	
-**Proyecto** (codProyecto, nombrP,descripcion, fechaInicioP, fechaFinP, fechaFinEstimada, DNIResponsable(fk), equipoBackend(fk), equipoFrontend(fk)) `DNIResponsable corresponde a un empleado, equipoBackend y equipoFrontend corresponden a un equipo.`
+**Proyecto** (codProyecto, nombrP, descripcion, fechaInicioP, fechaFinP, fechaFinEstimada, DNIResponsable(fk), equipoBackend(fk), equipoFrontend(fk)) `DNIResponsable corresponde a un empleado, equipoBackend y equipoFrontend corresponden a un equipo.`
 
 **Equipo** (codEquipo, nombreE, descripcionTecnologias,DNILider(fk)) `DNILider corresponde a un empleado`
 
 **Empleado** (DNI,nombre, apellido, telefono, direccion, fechaIngreso)
 
-**Empleado_Equipo** (codEquipo,DNI, fechaInicio, fechaFin,descripcionRol)
+**Empleado_Equipo** (codEquipo,DNI, fechaInicio, fechaFin, descripcionRol)
 
 1. Listar nombre, descripción, fecha de inicio y fecha de fin de proyectos ya finalizados que no fueron terminados antes de la fecha de fin estimada. 
 
@@ -383,6 +383,13 @@
 		- **π**<sub>nombreP, descripcion, fechaInicioP,</sub> (**σ**<sub>DNI = DNIResponsable</sub (Empleado **𝑥** proy2019))
 
 9. Listar nombre de equipo, descripción de tecnología y la información personal del líder, de equipos que no estén asignados a ningún proyecto aun.
+
+	- Solución
+		- equiposEnProyFrontend **⇐** **π**<sub>codEquipo, nombreE, descripcionTecnologias, DNILider</sub> (**σ**<sub>codEquipo = equipoFrontend</sub>(Equipo **𝑥** Proyecto))
+		- equiposEnProyBackend **⇐** **π**<sub>codEquipo, nombreE, descripcionTecnologias, DNILider</sub> (**σ**<sub>codEquipo = equipoFrontend</sub>(Equipo **𝑥** Proyecto))
+		- equiposEnProy **⇐** (equipoFrontend **⋃** equipoBackend)
+		- equiposSinProy **⇐** **π**<sub>codEquipo, nombreE, descripcionTecnologias, DNILider</sub> (Equipo **−** equiposEnProy)
+		- **π**<sub>nombreE, descripcionTecnologias, nombre, apellido, telefono, direccion, fechaIngreso</sub> (**σ**<sub>DNILider = DNI</sub> (equiposSinProy **𝑥** Empleado))
 
 ### Ejercicio 7
 
@@ -463,9 +470,22 @@
 
 1. Listar DNIB, nombYApB, direccionB, telefonoContacto y mail de barberos que tengan atenciones con valor superior a 5000.
 
+	- Solución
+		- **π**<sub>DNIB, nombYApB, direccionB</sub> (Barbero **|𝑥|** (**σ**<sub>valor > 5000</sub> (Atención)))
+
 2. Listar DNI, nombYAp, direccionC, fechaNacimiento y celular de clientes que tengan atenciones en la barbería con razón social: ‘Corta barba’ y también se hayan atendido en la barbería con razón social: ‘Barberia Barbara’.
 
+	- Solución
+		- clientesEnCortaBarba **⇐** **π**<sub>nroCliente, DNI, nombYAp, direccionC, fechaNacimiento, celular</sub> (Clientes **|𝑥|** Atencion **|𝑥|** (**σ**<sub>razon_social = 'Corta barba'</sub> (Barberia)))
+		- clientesEnBarbara **⇐** **π**<sub>nroCliente, DNI, nombYAp, direccionC, fechaNacimiento, celular</sub> (Cliente **|𝑥|** Atencion **|𝑥|** (**σ**<sub>razon_social = 'Barberia Barbara'</sub> (Barberia)))
+		- **π**<sub>nroCliente, DNI, nombYAp, direccionC, fechaNacimiento, celular</sub> (atencionEnBarbara **⋂** atencionEnCortaBarba)
+
 3. Eliminar el cliente con DNI: 22222222.
+
+	- Solución
+		- nroEliminar **⇐** **π**<sub>nroCliente</sub> (**σ**<sub>DNI = 2222222</sub> (Cliente))
+		- Atencion **⇐** Atencion **−** (**σ**<sub>nroCliente = nroEliminar</sub> (Atencion))
+		- Cliente **⇐** Cliente **−** (**σ**<sub>nroCliente = nroEliminar</sub> (Cliente))
 
 ### Ejercicio 10
 
@@ -479,10 +499,74 @@
 
 **Entrenamiento** (IdEntrenamiento, fecha, IdEntrenador(fk), IdCancha(fk))
 
-1- Listar nombre , fecha de nacimiento y dirección de entrenadores que hayan entrenado en la cancha “Cancha 1” y en la Cancha “Cancha 2”.
+1. Listar nombre , fecha de nacimiento y dirección de entrenadores que hayan entrenado en la cancha “Cancha 1” y en la Cancha “Cancha 2”.
 
-2- Listar todos los clubes en los que entrena el entrenador “Marcos Perez”. Informar nombre del club y ciudad.
+	- Solución
+		- entrenadoresC1 **⇐** **π**<sub>nombre, fechaNacimiento, direccion</sub>(Entrenador **|𝑥|** (Entrenamiento **|𝑥|** (**σ**<sub>nombreCancha = 'Cancha 1'</sub> (Cancha)))
+		- entrenadoresC2 **⇐** **π**<sub>nombre, fechaNacimiento, direccion</sub>(Entrenador **|𝑥|** (Entrenamiento **|𝑥|** (**σ**<sub>nombreCancha = 'Cancha 2'</sub> (Cancha)))
+		- **π**<sub>nombre, fechaNacimiento, direccion</sub>(entrenadoresC1 **⋂** entrenadoresC2)
+		
 
-3- Eliminar los entrenamientos del entrenador  ‘Juan Perez’.
+2. Listar todos los clubes en los que entrena el entrenador “Marcos Perez”. Informar nombre del club y ciudad.
+	
+	- Solución
+		- **π**<sub>nombreClub, ciudad</sub> (Club **|𝑥|** (Complejo **|𝑥|** (Cancha **|𝑥|** (Entrenamiento **|𝑥|** (**σ**<sub>nombreEntrenador = 'Marcos Perez'</sub>(Entrenador)))))
+
+3. Eliminar los entrenamientos del entrenador  ‘Juan Perez’.
+
+	- Solución
+		- entrenamientosDeJuanPerez **⇐** **π**<sub>IdEntrenamiento, fecha, IdEntrenador, IdCancha</sub>(Entrenamiento **|𝑥|** (**σ**<sub>nombreEntrenador = 'Juan Perez'</sub>(Entrenador)))
+		- Entrenamiento **⇐** Entrenamiento **−** entrenamientosDeJuanPerez
 
 <u></u>
+
+**Cliente** = ((nroClte)pk, cuit, nomClte, email)
+
+**Producto** = ((codProd)pk, nomProd, descrip, stock, precio)
+
+**Pedido** = ((nroPed)pk, fechaPed, (nroClte)fk, dirEntrega)
+
+**PedProd** = (((nroPed)fk, (codProd)fk)pk, cantPed, precioU)
+
+**Entrega** = ((nroRemito)pk, fechaEnt, (nroPed)fk) 
+
+**EntProd** = (((nroRemito) fk, (codProd)fk)pk, cantEnt)
+
+Notas
+
+Un pedido puede tener más de una entrega.
+
+Una entrega puede no incluir a un producto del pedido correspondiente, y una entrega de producto para un pedido puede ser por una cantidad menor a la pedida.
+
+Resolver 1 a 4 en AR y 2 a 6 en SQL
+
+1. Listar CUIT y nombre de cliente y código, nombre y descripción de producto, para clientes que no hayan pedido el producto en los últimos doce meses, pero si lo hayan pedido anteriormente.
+	
+	- Solución:
+		- pedidosClientesDesdeHace1Anio **⇐** **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (**σ**<sub>fechaPed >= 19/12/2022</sub>( Cliente **|𝑥|** Pedido **|𝑥|** PedProd **|𝑥|** Producto)
+		- pedidosClientesHaceMas1Anio **⇐** **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (**σ**<sub>fechaPed <= 19/12/2022</sub>( Cliente **|𝑥|** Pedido **|𝑥|** PedProd **|𝑥|** Producto)
+		- **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (pedidosClientesHaceMas1Anio **−** pedidosClientesDesdeHace1Anio)
+		
+		
+		
+
+
+
+
+2. Listar CUIT, nombre y email de clientes que en los últimos doce meses hayan pedido todos los productos.
+
+	- Solución
+
+
+3. Listar para los pedidos de los últimos treinta días, el número y fecha del pedido, el código y cantidad pedida de cada producto y el número de remito, fecha de entrega y cantidad entregada del producto para cantidades entregadas menores a las pedidas. En SQL ordenar por número de pedido, código de producto y fecha de entrega.
+	- SOlución
+		- pedidosHace30dias **⇐** **π**<sub>nroPed, fechaPed, nroClte, dirEntrega</sub>(**σ**<sub>fechaPed >= a30Dias</sub> (Pedido))
+		- **π**<sub>nroPed, fechaPed, codProd, cantPed, nroRemito, fechaEnt, cantEnt</sub> (pedidosHace30dias **|𝑥|** (**σ**<sub>Pedido.cantPed >= EntProd.cantEnt</sub> (Pedido **|𝑥|** EntProd))))
+
+
+4. Listar para los pedidos de los últimos treinta días, el número y fecha del pedido, el CUIT, nombre y dirección de entrega del cliente, y el código y cantidad pedida de producto, para productos que no hayan sido enviados. En SQL ordenar por número de pedido.
+
+5. Listar número y fecha de pedido, y código de producto, cantidad pedida y cantidad enviada del producto de pedidos de los últimos treinta días con cantidad enviada menor a la pedida (incluyendo productos pedidos de los que no se envió ninguna unidad). En SQL ordenar por número de pedido y código de producto.
+
+6. Listar número de cliente, número y fecha de pedido, cantidad de productos pedidos y monto total correspondiente a los productos entregados, correspondientes a pedidos de los últimos treinta días. En SQL ordenar por monto total en forma descendente.
+
