@@ -73,7 +73,7 @@
 
 10. Agregar un producto con id de producto 1000, descripción “mi producto”, precio $10000, nombreP “producto Z” y stock 1000. Se supone que el idProducto 1000 no existe.
 	- Solución:
-		- Producto **⇐** Producto < {(1000, "mi producto", 10000, "producto z", 1000)}
+		- Producto **⇐** Producto **⋃** {(1000, "mi producto", 10000, "producto z", 1000)}
 		
 ### Ejercicio 2:
 
@@ -520,53 +520,4 @@
 
 <u></u>
 
-**Cliente** = ((nroClte)pk, cuit, nomClte, email)
-
-**Producto** = ((codProd)pk, nomProd, descrip, stock, precio)
-
-**Pedido** = ((nroPed)pk, fechaPed, (nroClte)fk, dirEntrega)
-
-**PedProd** = (((nroPed)fk, (codProd)fk)pk, cantPed, precioU)
-
-**Entrega** = ((nroRemito)pk, fechaEnt, (nroPed)fk) 
-
-**EntProd** = (((nroRemito) fk, (codProd)fk)pk, cantEnt)
-
-Notas
-
-Un pedido puede tener más de una entrega.
-
-Una entrega puede no incluir a un producto del pedido correspondiente, y una entrega de producto para un pedido puede ser por una cantidad menor a la pedida.
-
-Resolver 1 a 4 en AR y 2 a 6 en SQL
-
-1. Listar CUIT y nombre de cliente y código, nombre y descripción de producto, para clientes que no hayan pedido el producto en los últimos doce meses, pero si lo hayan pedido anteriormente.
-	
-	- Solución:
-		- pedidosClientesDesdeHace1Anio **⇐** **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (**σ**<sub>fechaPed >= 19/12/2022</sub>( Cliente **|𝑥|** Pedido **|𝑥|** PedProd **|𝑥|** Producto)
-		- pedidosClientesHaceMas1Anio **⇐** **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (**σ**<sub>fechaPed <= 19/12/2022</sub>( Cliente **|𝑥|** Pedido **|𝑥|** PedProd **|𝑥|** Producto)
-		- **π**<sub>cuit, nomClte, codProd, nomProd, descrip</sub> (pedidosClientesHaceMas1Anio **−** pedidosClientesDesdeHace1Anio)
-		
-		
-		
-
-
-
-
-2. Listar CUIT, nombre y email de clientes que en los últimos doce meses hayan pedido todos los productos.
-
-	- Solución
-
-
-3. Listar para los pedidos de los últimos treinta días, el número y fecha del pedido, el código y cantidad pedida de cada producto y el número de remito, fecha de entrega y cantidad entregada del producto para cantidades entregadas menores a las pedidas. En SQL ordenar por número de pedido, código de producto y fecha de entrega.
-	- SOlución
-		- pedidosHace30dias **⇐** **π**<sub>nroPed, fechaPed, nroClte, dirEntrega</sub>(**σ**<sub>fechaPed >= a30Dias</sub> (Pedido))
-		- **π**<sub>nroPed, fechaPed, codProd, cantPed, nroRemito, fechaEnt, cantEnt</sub> (pedidosHace30dias **|𝑥|** (**σ**<sub>Pedido.cantPed >= EntProd.cantEnt</sub> (Pedido **|𝑥|** EntProd))))
-
-
-4. Listar para los pedidos de los últimos treinta días, el número y fecha del pedido, el CUIT, nombre y dirección de entrega del cliente, y el código y cantidad pedida de producto, para productos que no hayan sido enviados. En SQL ordenar por número de pedido.
-
-5. Listar número y fecha de pedido, y código de producto, cantidad pedida y cantidad enviada del producto de pedidos de los últimos treinta días con cantidad enviada menor a la pedida (incluyendo productos pedidos de los que no se envió ninguna unidad). En SQL ordenar por número de pedido y código de producto.
-
-6. Listar número de cliente, número y fecha de pedido, cantidad de productos pedidos y monto total correspondiente a los productos entregados, correspondientes a pedidos de los últimos treinta días. En SQL ordenar por monto total en forma descendente.
 

@@ -305,11 +305,38 @@
 
 	```sql
 
-				
+		UPDATE SET Cliente
 		
 	```
 
 8. Listar razon_social, dirección y teléfono de la/s agencias que tengan mayor cantidad de viajes realizados.
+
+
+	```sql
+
+		SELECT razon_social, direccion, telefono
+		FROM Agencia a
+		INNER JOIN Viaje v ON a.razon_social = v.razon_social
+		GROUP BY razon_social, direccion, telefono
+		HAVING COUNT(*) <= ALL (
+			SELECT COUNT(*)
+			FROM Viaje v
+			GROUP BY v.razon_social
+		)
+		
+		
+	```
+
+
+
+
+
+
+
+
+
+
+
 
 	```sql
 
@@ -849,7 +876,14 @@
 
 	```sql
 
-				
+		DELETE FROM Alumno-Curso ac
+		WHERE ac.DNI = 30568989
+		
+		DELETE FROM Alumno a
+		WHERE a.DNI = 30568989
+		
+		DELETE FROM Persona p
+		WHERE p.DNI = 30568989
 		
 	```
 
@@ -1711,7 +1745,8 @@ integrantes.
 
 	```sql
 	
-		DELETE FROM Service
+		DELETE 
+		FROM Service
 		WHERE Service.patente IN (
 			SELECT Camion.patente
 			FROM Camion 
@@ -1719,7 +1754,8 @@ integrantes.
 			WHERE Vehiculo.km > 250000
 		)
 		
-		DELETE FROM Service_Parte
+		DELETE 
+		FROM Service_Parte
 		WHERE Service_Parte.patente IN (
 			SELECT Camion.patente
 			FROM Camion
@@ -1727,7 +1763,8 @@ integrantes.
 			WHERE Vehiculo.km > 250000
 		)
 		
-		DELETE FROM Vehiculo
+		DELETE 
+		FROM Vehiculo
 		WHERE Vehiculo.patente IN (
 			SELECT Camion.patente
 			FROM Camion
@@ -1735,7 +1772,8 @@ integrantes.
 			WHERE Vehiculo.km > 250000
 		)
 		
-		DELETE FROM Camion
+		DELETE 
+		FROM Camion
 		WHERE Camion.patente IN (
 			SELECT Camion.patente
 			FROM Camion
@@ -1753,10 +1791,16 @@ integrantes.
 		
 		SELECT p.nombre, p.precio_parte
 		FROM Parte
-		WHERE EXISTS (
-			SELECT * 
-			FROM Service_Parte
-			WHERE Service_Parte.cod_parte = Parte.cod_parte AND (YEAR(s.fecha) = YEAR(CURRENT_DATE))
+		WHERE NOT EXISTS (
+			SELECT *
+			FROM Service s
+			WHERE YEAR(s.fecha) = YEAR(CURRENT DATE)
+			WHERE NOT EXIST (
+				SELECT *
+				FROM Service_Parte sp
+				WHERE s.fecha = sp.fecha AND (p.cod_parte = so.cod_parte)
+			)
+				
 		)
 	
 	```
